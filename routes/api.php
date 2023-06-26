@@ -114,8 +114,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/tech/info/{id}', [TechUserController::class, 'getDetails']);
 
-
-
     // testing email
     // Route::get('/mobile/email/{id}', [MobileBookingController::class, 'email_send']);
 });
