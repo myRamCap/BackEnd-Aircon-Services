@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('client_id');
             $table->string('reference_number', 255)->nullable();
-            $table->bigInteger('vehicle_id');
+            $table->bigInteger('aircon_id');
             $table->bigInteger('services_id');
             $table->bigInteger('service_center_id');
             $table->string('status');

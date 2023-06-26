@@ -18,9 +18,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/email', function () {
-//     return view('emails.welcome');
-// });
+Route::get('/email', function () {
+    return view('emails.booking');
+});
+
+Route::get('/emailw', function () {
+    return view('emails.welcome');
+});
 
 // Route::get('/forgot_pwd', function () {
 //     return view('emails.forgot');

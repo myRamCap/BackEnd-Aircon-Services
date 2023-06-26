@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class promotionController extends Controller
 {
-    public function promotions() {
+    public function promotions($id) {
         $currentDate = Carbon::today()->format('Y-m-d');
 
         $promotions = Promotion::select('clients.id', 'clients.first_name','clients.last_name', 'promotions.datefrom', 'promotions.dateto', 'promotions.title', 'promotions.content', 'promotions.image_url' )
@@ -23,6 +23,7 @@ class promotionController extends Controller
                 });
             })
             ->where('promotions.dateto', '>=', $currentDate)
+            ->where('clients.id', '=', $id)
             ->get();
 
         return response([ 'data' => $promotions], 200);

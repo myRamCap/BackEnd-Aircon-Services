@@ -13,11 +13,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         \App\Models\User::create([
-            'first_name' => 'Jhon Ray',
-            'middle_name' => 'Lorenzo',
-            'last_name' => 'Angcon',
+            'first_name' => 'Super',
+            'middle_name' => '',
+            'last_name' => 'Admin',
             'role_id' => '1',
-            'email' => 'jhonrayangcon1423@gmail.com',
+            'email' => 'admin@mangpogs.com',
             'password' => bcrypt('welcome@123'),
             'contact_number' => '123456789',
             'image' => 'image_test'
@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
                 'contact_number' => '1235456', 
                 'address' => 'lalam akasya', 
                 'is_activated' => '1', 
+                'active' => '1', 
                 'remember_token' => null, 
                 'created_at' => now(), 
                 'updated_at' => now(), 
@@ -42,10 +43,30 @@ class DatabaseSeeder extends Seeder
                 'contact_number' => '12354256', 
                 'address' => 'lalam kwayan', 
                 'is_activated' => '1', 
+                'active' => '1',
                 'remember_token' => null, 
                 'created_at' => now(), 
                 'updated_at' => now(), 
             ],
+            [ 
+                'first_name' => 'Default', 
+                'last_name' => 'Default', 
+                'email' => 'Default@email.com', 
+                'contact_number' => '09123456789', 
+                'address' => 'Default', 
+                'is_activated' => '1', 
+                'active' => '1',
+                'remember_token' => null, 
+                'created_at' => now(), 
+                'updated_at' => now(), 
+            ],
+        ]);
+
+        \App\Models\ClientToken::create([
+            'token' => '134679',
+            'contact_number' => '09123456789',
+            'is_activated' => '0',
+            'is_expired' => '0',
         ]);
 
         \App\Models\Role::insert([
@@ -72,7 +93,7 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(), 
             ],
             [ 
-                'name' => 'Branch Advisor', 
+                'name' => 'Technician', 
                 'role_access' => null,
                 'created_at' => now(), 
                 'updated_at' => now(), 

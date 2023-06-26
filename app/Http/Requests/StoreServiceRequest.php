@@ -24,7 +24,9 @@ class StoreServiceRequest extends FormRequest
         return [
             'name' => 'required|string|unique:services,name',
             'details' => 'required|string',
+            'service_center_id' => 'required|integer',
             'image_id' => 'integer|nullable',
+            'created_by' => 'integer|nullable',
         ];
     }
 }

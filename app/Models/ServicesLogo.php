@@ -16,5 +16,7 @@ class ServicesLogo extends Model
         'description',
         'image',
         'image_url',
+        'created_by',
+        'updated_by',
     ];
 }

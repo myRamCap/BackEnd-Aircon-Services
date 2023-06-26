@@ -14,7 +14,10 @@ class Service extends Model
     protected $fillable = [
         'name',
         'details',
+        'service_center_id',
         'image_id',
+        'created_by',
+        'updated_by',
     ];
  
 }

@@ -30,6 +30,7 @@ class StorePromotionRequest extends FormRequest
             'title' => 'required',
             'content' => 'required',
             'image_url' => 'required',
+            'created_by' => 'nullable|integer',
         ];
     }
 

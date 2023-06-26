@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('province');
             $table->decimal('longitude', 19, 15);
             $table->decimal('latitude', 19, 15);
-            $table->integer('facility');
+            $table->integer('group');
             $table->string('corporate_manager_id');
             $table->longText('image')->nullable();
             $table->timestamps();

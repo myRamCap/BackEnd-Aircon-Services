@@ -13,12 +13,12 @@ class Vehicle extends Model
 
     protected $fillable = [
         'client_id',
-        'vehicle_name',
-        'chassis_number',
-        // 'contact_number',
+        'aircon_name',
+        'aircon_type',
         'make',
         'model',
-        'year',
+        'horse_power',
+        'serial_number',
         'image',
         'notes',
     ];

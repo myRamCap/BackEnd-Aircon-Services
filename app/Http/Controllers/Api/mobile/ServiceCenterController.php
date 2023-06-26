@@ -9,6 +9,7 @@ use App\Models\ServiceCenterOperationTime;
 use App\Models\ServiceCenterService;
 use App\Models\TimeSlot;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ServiceCenterController extends Controller
 {
@@ -51,20 +52,26 @@ class ServiceCenterController extends Controller
     }
 
     public function getall() {
-        $service_center = ServiceCenter::get();
+        $service_centers = ServiceCenter::get();
+
         $serviceCenterData = [];
-        foreach ($service_center as $service_center) {
+        foreach ($service_centers as $service_center) {
             $services = ServiceCenterService::join('services', 'services.id', '=', 'service_center_services.service_id')
                         ->join('services_logos', 'services_logos.id', '=', 'services.image_id')
                         ->select('service_center_services.id', 'services.name', 'services.details', 'services_logos.image_url', 'service_center_services.estimated_time', 'service_center_services.estimated_time_desc' )
-                        ->where('service_center_id', $service_center['id'])->get();
-            $timeslot = TimeSlot::where('service_center_id', $service_center['id'])->get();
+                        ->where('service_center_services.service_center_id', $service_center->id)
+                        ->get();
+         
+            $timeslot = TimeSlot::where('service_center_id', $service_center->id)->get();
  
-
+            
             $serviceCenterData[] = [
-                'sevice_center' => $service_center,
-                'services' => $services,
-                'timeSlot' => $timeslot 
+                'service_center' => [
+                    'data' => array_merge($service_center->toArray(), [
+                        'services' => $services,
+                        'timeSlot' => $timeslot
+                    ])
+                ]
             ];
         }
 

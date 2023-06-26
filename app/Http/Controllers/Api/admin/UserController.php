@@ -56,15 +56,21 @@ class UserController extends Controller
     {
             $data = $request->validated();
             $data['password'] = bcrypt('welcome@123');
-            
+            $data['created_by'] = $request->user_id;
 
             if ($request->user_role == 1) { 
-                $user = User::create($data);
-                UserRestriction::create([
-                    'user_id' => $user->id,
-                    'allowed_sc' => $request->allowed_sc,
-                    'allowed_bm' => $request->allowed_bm
-                ]);
+                if ($request->role_id == 1) {
+                    
+                    $user = User::create($data);
+                } else {
+                    $user = User::create($data);
+                    UserRestriction::create([
+                        'user_id' => $user->id,
+                        'allowed_sc' => $request->allowed_sc,
+                        'allowed_bm' => $request->allowed_bm
+                    ]);
+                }
+                
             } else if ($request->user_role == 2) {
                 $corporate_manager = ManageUser::join('users', 'users.id', '=', 'manage_users.user_id')
                                 ->where('manage_users.corporate_manager_id', $request->user_id)     
@@ -109,19 +115,21 @@ class UserController extends Controller
     {
         $user = User::where('id', $id)->first();
 
-        if ($user['role_id'] === 1) {
-            // DB::enableQueryLog();
+        if ($user['role_id'] == 1) {
+            // DB::enableQueryLog(); .id', 'desc')
             return UserResource::collection(
-                User::join('roles', 'roles.id', '=', 'users.role_id')
-                ->join('user_restrictions', 'user_restrictions.user_id', '=', 'users.id')
-                ->select('users.*', 'roles.name',  'user_restrictions.allowed_bm', 'user_restrictions.allowed_sc')
-                ->where('users.role_id', '=', 2)
-                ->orderBy('users.id','desc')->get()
+                DB::select("SELECT a.*, b.name, c.allowed_bm, c.allowed_sc, CONCAT(d.first_name, ' ', d.last_name) AS created_by, CONCAT(e.first_name, ' ', e.last_name) AS updated_by
+                FROM users a
+                INNER JOIN roles b ON b.id = a.role_id 
+                LEFT JOIN user_restrictions c ON c.user_id = a.id
+                LEFT JOIN users d ON d.id = a.created_by
+                LEFT JOIN users e ON e.id = a.updated_by
+                ORDER BY a.id DESC")
             ); 
-            // return DB::getQueryLog();
+            // return DB::getQueryLog(); 
         }else if ($user['role_id'] == 2) {
             return UserResource::collection(
-               DB::select("SELECT a.*, b.name, d.id as service_center_id, d.name as service_center, concat(e.first_name, ' ', e.last_name) as branch_manager
+               DB::select("SELECT a.*, b.name, d.id as service_center_id, d.name as service_center, concat(e.first_name, ' ', e.last_name) as branch_manager, CONCAT(f.first_name, ' ', f.last_name) as created_by, CONCAT(g.first_name, ' ', g.last_name) as updated_by
                     FROM users a
                     INNER JOIN roles b ON a.role_id = b.id
                     INNER JOIN (
@@ -130,19 +138,25 @@ class UserController extends Controller
                         WHERE corporate_manager_id = $id
                     ) c ON a.id = c.user_id
                     INNER JOIN service_centers d ON c.service_center_id = d.id
-                    LEFT JOIN users e ON c.branch_manager_id = e.id")
+                    LEFT JOIN users e ON c.branch_manager_id = e.id
+                    LEFT JOIN users f ON f.id = a.created_by
+                    LEFT JOIN users g ON g.id = a.updated_by
+                    ORDER BY a.id DESC")
             ); 
         }
         else if ($user['role_id'] == 3) {
             return UserResource::collection(
-               DB::select("SELECT a.*, b.name
+               DB::select("SELECT a.*, b.name, CONCAT(f.first_name, ' ', f.last_name) as created_by, CONCAT(g.first_name, ' ', g.last_name) as updated_by
                     FROM users a
                     INNER JOIN roles b ON a.role_id = b.id
                     INNER JOIN (
                         SELECT user_id
                         FROM manage_users
                         WHERE branch_manager_id = $id
-                    ) c ON a.id = c.user_id")
+                    ) c ON a.id = c.user_id
+                    LEFT JOIN users f ON f.id = a.created_by
+                    LEFT JOIN users g ON g.id = a.updated_by
+                    ORDER BY a.id DESC")
             ); 
         }else if ($user['role_id'] == 4) {
             return UserResource::collection(
@@ -167,6 +181,7 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->contact_number = $request->contact_number;
         $user->role_id = $request->role_id;
+        $user->updated_by = $request->user_id;
         $user->save(); 
         
         if ($request->user_role == 1) {

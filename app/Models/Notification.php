@@ -21,6 +21,8 @@ class Notification extends Model
         'title',
         'content',
         'image_url',
+        'created_by',
+        'updated_by',
     ];
 }
  

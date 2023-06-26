@@ -12,6 +12,7 @@ class ServiceCenter extends Model
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
+        'reference_number',
         'name',
         'category',
         'country',
@@ -21,7 +22,7 @@ class ServiceCenter extends Model
         'province',
         'longitude',
         'latitude',
-        'facility',
+        'group',
         'corporate_manager_id',
         'image',
     ];

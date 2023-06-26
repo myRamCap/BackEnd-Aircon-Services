@@ -37,7 +37,10 @@ class UserResource extends JsonResource
             'allowed_sc' => $this->allowed_sc ?? null,
             'allowed_bm' => $this->allowed_bm ?? null,
             'image' => $this->image,
+            'created_by' => $this->created_by,
+            'updated_by' => $this->updated_by,
             'created_at' => $createdAt->format('Y-m-d H:i:s'),
+            'updated_at' => $createdAt->format('Y-m-d H:i:s'),
         ];
     }
 }

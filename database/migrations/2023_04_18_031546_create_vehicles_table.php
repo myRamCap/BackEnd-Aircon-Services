@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('client_id');
-            $table->string('vehicle_name');
-            $table->string('chassis_number')->nullable();
-            $table->string('contact_number')->nullable();
+            $table->string('aircon_name');
+            $table->string('aircon_type')->nullable();
+            // $table->string('contact_number')->nullable();
             $table->string('make')->nullable();
             $table->string('model')->nullable();
-            $table->integer('year')->nullable();
+            $table->string('horse_power')->nullable();
+            $table->string('serial_number', 255)->nullable();
             $table->longText('image')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

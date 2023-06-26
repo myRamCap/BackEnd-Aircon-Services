@@ -26,6 +26,8 @@ class User extends Authenticatable
         'contact_number',
         'role_id',
         'image',
+        'created_by',
+        'updated_by',
         
     ];
 

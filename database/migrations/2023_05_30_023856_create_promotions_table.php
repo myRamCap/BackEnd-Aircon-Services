@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('content')->nullable();
             $table->longText('image_url')->nullable();
+            $table->bigInteger('created_by')->nullable();
+            $table->bigInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

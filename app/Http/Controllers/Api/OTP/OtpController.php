@@ -96,7 +96,9 @@ class OtpController extends Controller
             $get_token->save();
             $get_user_email = $email;
             $get_user_name = $email;
-            Mail::to($email)->send(new WelcomeMail($get_user_email, $validToken, $get_user_name));
+            $mail = new WelcomeMail($get_user_email, $validToken, $get_user_name);
+            $mail->from('admin@mangpogs.com');
+            Mail::to($email)->send($mail);
 
             return response('Email Resend successfully');
         }

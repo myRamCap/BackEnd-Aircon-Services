@@ -26,6 +26,7 @@ class StoreServiceLogo extends FormRequest
             'description' => 'required|string|max:555',
             'image' => 'string|nullable',
             'image_url' => 'string|nullable',
+            'created_by' => 'integer|nullable',
         ];
     }
 }

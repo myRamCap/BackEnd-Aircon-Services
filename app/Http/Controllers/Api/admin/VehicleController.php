@@ -30,7 +30,7 @@ class VehicleController extends Controller
             // Vehicle::where('client_id', $id)->orderBy('id','desc')->get()
             Vehicle::join('clients', 'clients.id', '=', 'vehicles.client_id')
             ->select('vehicles.*', 'clients.first_name', 'clients.last_name', 'clients.contact_number')
-            ->where('vehicles.client_id', $id)->orderBy('vehicle_name','ASC')->get()
+            ->where('vehicles.client_id', $id)->orderBy('aircon_name','ASC')->get()
          ); 
     }
 
@@ -49,12 +49,12 @@ class VehicleController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'client_id' => 'required|integer',
-            'vehicle_name' => 'required|string',
-            'chassis_number' => 'nullable|string',
-            // 'contact_number' => 'nullable|string',
+            'aircon_name' => 'required|string',
+            'aircon_type' => 'nullable|string',
             'make' => 'required|string',
             'model' => 'nullable|string',
-            'year' => 'nullable|integer',
+            'horse_power' => 'nullable|string',
+            'serial_number' => 'nullable|string',
             'image' => 'nullable',
             'notes' => 'nullable',
         ]);
@@ -69,12 +69,12 @@ class VehicleController extends Controller
 
         $data = [
             'client_id' => $request->client_id,
-            'vehicle_name' => $request->vehicle_name,
-            'chassis_number' => $request->chassis_number,
-            // 'contact_number' => $request->contact_number,
+            'aircon_name' => $request->aircon_name,
+            'aircon_type' => $request->aircon_type,
             'make' => $request->make,
             'model' => $request->model,
-            'year' => $request->year,
+            'horse_power' => $request->horse_power,
+            'serial_number' => $request->serial_number,
             'image' => $request->image,
             'notes' => $request->notes,
         ];
@@ -113,12 +113,13 @@ class VehicleController extends Controller
 
         $vehicle = Vehicle::find($request->id);
         $vehicle->client_id = $request->client_id;
-        $vehicle->vehicle_name = $request->vehicle_name;
-        $vehicle->chassis_number = $request->chassis_number;
+        $vehicle->aircon_name = $request->aircon_name;
+        $vehicle->aircon_type = $request->aircon_type;
         // $vehicle->contact_number = $request->contact_number;
         $vehicle->make = $request->make;
         $vehicle->model = $request->model;
-        $vehicle->year = $request->year;
+        $vehicle->horse_power = $request->horse_power;
+        $vehicle->serial_number = $request->serial_number;
         $vehicle->image = $request->image;
         $vehicle->notes = $request->notes;
         $vehicle->save();

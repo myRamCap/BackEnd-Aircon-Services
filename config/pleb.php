@@ -35,10 +35,10 @@ return [
         'ios_url'           => '123',
 
         // To remove from the email footer - make the value blank
-        'facebook_url'      => 'https://www.facebook.com',
-        'twitter_url'       => 'https://www.twitter.com',
-        'instagram_url'     => 'https://www.instagram.com',
-        'pinterest_url'     => 'https://www.pinterest.com',
+        'facebook_url'      => 'https://www.facebook.com/profile.php?id=10009383362288',
+        'youtube_url'       => 'https://www.youtube.com/@mangpogs',
+        'linkedin_url'     => 'https://www.linkedin.com/in/ramcap-ph-25688324b',
+        'tiktok_url'     => 'https://www.tiktok.com/@mangpogs',
     ],
 
 

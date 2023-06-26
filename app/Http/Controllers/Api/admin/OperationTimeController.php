@@ -7,11 +7,38 @@ use App\Models\ServiceCenterOperationTime;
 use App\Http\Requests\StoreServiceCenterOperationTimeRequest;
 use App\Http\Requests\UpdateServiceCenterOperationTimeRequest;
 use App\Http\Resources\OperationTimeResource;
+use App\Models\ManageUser;
 use App\Models\Time;
 use App\Models\TimeSlot;
+use App\Models\User;
 
 class OperationTimeController extends Controller
 {
+    public function operation($id) {
+        $user = User::where('id', '=', $id)->first();
+        // return $user;
+        if ($user['role_id'] == 2) {
+            $operation = ServiceCenterOperationTime::join('service_centers', 'service_center_operation_times.service_center_id' , '=', 'service_centers.id')
+            ->select('service_center_operation_times.*')
+            ->where('service_centers.corporate_manager_id', '=', $id)
+            ->first();
+
+            return $operation;
+
+        } else if ($user['role_id'] == 3) {
+            $operation = ManageUser::join('service_center_operation_times', 'service_center_operation_times.service_center_id' , '=', 'manage_users.service_center_id')
+            ->select('service_center_operation_times.*')
+            ->where('user_id' , '=', $id)
+            ->first();
+
+            return response($operation);
+        }
+            
+
+      
+        
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,19 +48,16 @@ class OperationTimeController extends Controller
          // Extract the abbreviation
          $abbreviation = strtoupper(substr(str_replace(' ', '', $municipality), 0, 3));
     
-    // Get the current year
-    $year = date('Y');
-    
-    // Unique numerical identifier
-    $identifier = '2468'; // Replace with your actual unique identifier generation logic
-    
-    // Concatenate the components to form the reference number
-    $referenceNumber = $abbreviation . $year . '-' . $identifier;
-    
-    return $referenceNumber;
-        // return OperationTimeResource::collection(
-        //     ServiceCenterOperationTime::get()
-        // );
+        // Get the current year
+        $year = date('Y');
+        
+        // Unique numerical identifier
+        $identifier = '2468'; // Replace with your actual unique identifier generation logic
+        
+        // Concatenate the components to form the reference number
+        $referenceNumber = $abbreviation . $year . '-' . $identifier;
+        
+        return $referenceNumber;
     }
 
     /**

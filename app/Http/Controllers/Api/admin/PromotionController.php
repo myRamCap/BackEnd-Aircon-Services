@@ -10,6 +10,7 @@ use App\Models\ManageUser;
 use App\Models\Promotion;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PromotionController extends Controller
 {
@@ -37,7 +38,7 @@ class PromotionController extends Controller
     public function store(StorePromotionRequest $request)
     {
         $data = $request->validated();
-        $user = User::where('id', '=', $request->user_id)->first();
+        $user = User::where('id', '=', $request->created_by)->first();
 
         $data = [
             'category' => $request->category,
@@ -47,12 +48,13 @@ class PromotionController extends Controller
             'title' => $request->title,
             'content' => $request->content,
             'image_url' => $request->image_url,
+            'created_by' => $request->created_by,
         ];
 
         if ($user['role_id'] == 2) {
-            $data['corporate_account_id'] = $request->user_id;
+            $data['corporate_account_id'] = $request->created_by;
         } else if ($user['role_id'] == 3) {
-            $sc = ManageUser::where('user_id', '=', $request->user_id)->first();
+            $sc = ManageUser::where('user_id', '=', $request->created_by)->first();
             $data['corporate_account_id'] = $sc['corporate_manager_id'];
         }
 
@@ -76,29 +78,31 @@ class PromotionController extends Controller
             //             ORDER BY a.id DESC
             //     ")
             // );
+      
             return PromotionResource::collection(
-                Promotion::where('corporate_account_id', '=', $id)
-                    ->orderBy('id','desc')
-                    ->get()
+                // Promotion::where('corporate_account_id', '=', $id)
+                //     ->orderBy('id','desc')
+                //     ->get()
+                DB::select("SELECT a.*, CONCAT(b.first_name, ' ', b.last_name) AS created_by, CONCAT(c.first_name, ' ', c.last_name) AS updated_by 
+                FROM promotions a
+                LEFT JOIN users b ON a.created_by = b.id
+                LEFT JOIN users c ON a.updated_by = c.id
+                WHERE a.corporate_account_id = $id
+                ORDER BY a.id DESC")
             );
         } else if ($user['role_id'] == 3) {
             $sc = ManageUser::where('user_id', '=', $id)->first();
-            $cm_id = $sc['corporate_manager_id'];
+            $cs_id = $sc['service_center_id'];
 
             return PromotionResource::collection(
-                Promotion::where('corporate_account_id', '=', $cm_id)
-                    ->orderBy('id','desc')
-                    ->get()
+                DB::select("SELECT a.*, CONCAT(b.first_name, ' ', b.last_name) AS created_by, CONCAT(c.first_name, ' ', c.last_name) AS updated_by 
+                FROM promotions a
+                LEFT JOIN users b ON a.created_by = b.id
+                LEFT JOIN users c ON a.updated_by = c.id
+                JOIN service_centers d on a.corporate_account_id = d.corporate_manager_id
+                WHERE d.id = $cs_id
+                ORDER BY a.id DESC")
             );
-
-            // return NotificationResource::collection(
-            //     DB::select("SELECT a.*, b.first_name, b.last_name, c.name AS service_center FROM notifications a
-            //             LEFT JOIN users b ON a.corporate_id = b.id
-            //             LEFT JOIN service_centers c ON a.service_center_id = c.id
-            //             WHERE a.corporate_account_id = $cm_id
-            //             ORDER BY a.id DESC
-            //     ")
-            // );
         }
     }
 
@@ -126,6 +130,7 @@ class PromotionController extends Controller
         $promotion->title = $request->title;
         $promotion->content = $request->content;
         $promotion->image_url = $request->image_url;
+        $promotion->updated_by = $request->updated_by;
         $promotion->save();
         return response(new PromotionResource($promotion), 201);
     }

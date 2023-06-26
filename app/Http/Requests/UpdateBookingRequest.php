@@ -23,14 +23,14 @@ class UpdateBookingRequest extends FormRequest
     {
         return [
             'client_id' => 'required|integer:service_centers,name,'.$this->id,
-            'vehicle_id' => 'required|integer',
+            'aircon_id' => 'required|integer',
             'services_id' => 'required|integer',
             'service_center_id' => 'required|integer',
             'contact_number' => 'string|nullable',
             'status' => 'required|string',
             'booking_date' => 'required|string',
             'time' => 'required|string',
-            'notes' => 'string',
+            'notes' => 'string|nullable',
         ];
     }
 

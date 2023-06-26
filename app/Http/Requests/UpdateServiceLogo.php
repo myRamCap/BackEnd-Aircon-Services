@@ -26,6 +26,7 @@ class UpdateServiceLogo extends FormRequest
             'description' => 'required|string',
             'image' => 'string',
             'image_url' => 'string',
+            'updated_by' => 'integer',
         ];
     }
 }

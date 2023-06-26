@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientsResource;
 use App\Models\Client;
@@ -14,19 +15,27 @@ class ClientController extends Controller
 {
     public function clients() {
         return ClientsResource::collection(
-            Client::orderBy('first_name','asc')->get()
+            Client::orderBy('first_name','asc')
+            ->where('clients.active', '=', 1)
+            ->get()
          ); 
     }
 
     public function index() {
         return ClientResource::collection(
-            Client::orderBy('first_name','asc')->get()
+            Client::leftjoin('users', 'users.id', '=', 'clients.updated_by')
+            ->select('clients.*', 'users.first_name as updated_by')
+            ->where('clients.active', '=', 1)
+            ->orderBy('first_name','asc')->get()
          ); 
     }
 
     public function show($id) {
         return ClientResource::collection(
-            Client::orderBy('id','desc')->where('id', $id)->get()
+            Client::orderBy('id','desc')
+            ->where('id', $id)
+            ->where('clients.active', '=', 1)
+            ->get()
          ); 
     }
 
@@ -141,5 +150,17 @@ class ClientController extends Controller
         
         $user_email = (new ClientController)->otp_send($request->contact_number);
         return $user_email; 
+    }
+
+    public function update(UpdateClientRequest $request) {
+        
+        $request->validated();
+
+        $client = Client::find($request->id);
+        $client->contact_number = $request->contact_number;
+        $client->updated_by = $request->updated_by;
+        $client->active = $request->active;
+        $client->save();
+        return response(new ClientResource($client), 201);
     }
 }

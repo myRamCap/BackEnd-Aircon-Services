@@ -125,19 +125,34 @@ class ServiceCenterController extends Controller
         } else {
             $data = $request->validated();
             $municipality = $request->municipality;
+            $province = $request->province;
             
             if (strpos($municipality, 'CITY OF ') !== false) {
                 $index = strpos($municipality, 'CITY OF ') + strlen('CITY OF ');
-                $shortCode = substr($municipality, $index, 3);
+                $munshortCode = substr($municipality, $index, 3);
             } else {
-                $shortCode = substr($municipality, 0, 3);
+                $munshortCode = substr($municipality, 0, 3);
             }
 
+            if (strpos($province, 'CITY OF ') !== false) {
+                $index = strpos($province, 'CITY OF ') + strlen('CITY OF ');
+                $provshortCode = substr($province, $index, 3);
+            } else {
+                $provshortCode = substr($province, 0, 3);
+            }
+
+            $data['reference_number'] = $munshortCode.'-'.$provshortCode;
+
             $service_center = ServiceCenter::create($data);
-            $reference_number = $shortCode.'-'.$request->municipality_code;
+            // $reference_number = $munshortCode.'-'.$provshortCode;
+            // $service_center = ServiceCenter::find($service_center->id);
+            // $service_center->reference_number = $reference_number;
+
+            $id = $service_center->id;
             $service_center = ServiceCenter::find($service_center->id);
-            $service_center->reference_number = $reference_number;
+            $service_center->reference_number = $service_center->reference_number.'-'.$id;
             $service_center->save();
+           
             
             // $service_center = ServiceCenter::create($data);
 
@@ -203,7 +218,7 @@ class ServiceCenterController extends Controller
         $service_logo->province = $request->province;
         $service_logo->longitude = $request->longitude;
         $service_logo->latitude = $request->latitude;
-        $service_logo->facility = $request->facility;
+        $service_logo->group = $request->group;
         $service_logo->corporate_manager_id = $request->corporate_manager_id;
         $service_logo->reference_number = $shortCode.'-'.$request->municipality_code;
         $service_logo->image = $request->image;

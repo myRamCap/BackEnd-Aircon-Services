@@ -30,6 +30,7 @@ class UpdatePromotionRequest extends FormRequest
             'title' => 'required',
             'content' => 'required',
             'image_url' => 'required',
+            'updated_by' => 'nullable|integer',
         ];
     }
 

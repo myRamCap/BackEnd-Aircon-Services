@@ -31,7 +31,8 @@ class UpdateNotificationRequest extends FormRequest
             'dateto' => 'required|string',
             'title' => 'required|string',
             'content' => 'required|string',
-            'image_url' => 'required|string' 
+            'image_url' => 'required|string' ,
+            'updated_by' => 'nullable|integer' 
         ];
     }
 

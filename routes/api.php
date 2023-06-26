@@ -15,8 +15,6 @@ use App\Http\Controllers\Api\admin\ServicesLogoController as AdminServicesLogoCo
 use App\Http\Controllers\Api\admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\BookingController;
-use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\mobile\BookingController as MobileBookingController;
 use App\Http\Controllers\Api\mobile\ClientController as MobileClientController;
 use App\Http\Controllers\Api\mobile\NotificationController as MobileNotificationController;
@@ -25,19 +23,11 @@ use App\Http\Controllers\Api\mobile\ServiceCenterController as MobileServiceCent
 use App\Http\Controllers\Api\mobile\ServiceCenterTimeSlotController as MobileServiceCenterTimeSlotController;
 use App\Http\Controllers\Api\mobile\ServiceController as MobileServiceController;
 use App\Http\Controllers\Api\mobile\VehicleController as MobileVehicleController;
-use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OTP\OtpController;
-use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\ReportController;
-use App\Http\Controllers\Api\RolesController;
-use App\Http\Controllers\Api\ServiceCenterBookingController;
-use App\Http\Controllers\Api\ServiceCenterController;
-use App\Http\Controllers\Api\ServiceCenterServicesController;
-use App\Http\Controllers\Api\ServiceCenterTimeSlotController;
-use App\Http\Controllers\Api\ServiceController;
-use App\Http\Controllers\Api\ServicesLogoController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\VehicleController;
+use App\Http\Controllers\Api\tech\BookingController as TechBookingController;
+use App\Http\Controllers\Api\tech\ServiceCenterController as TechServiceCenterController;
+use App\Http\Controllers\Api\tech\UserController as TechUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,7 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return $request->user();
     });
 
-    // WEB
+    // ADMIN WEB APP
     Route::resource('/web/users', AdminUserController::class);
     Route::resource('/web/serviceslogo', AdminServicesLogoController::class);
     Route::resource('/web/services', AdminServiceController::class);
@@ -71,6 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/web/booking', AdminBookingController::class);
     Route::resource('/web/promotion', AdminPromotionController::class);
 
+    Route::get('/web/service_center/operation/{id}', [AdminOperationTimeController::class, 'operation']);
     Route::get('/web/corporate_account', [AdminUserController::class, 'corporate']);
     Route::get('/web/service_center/vehicle/{id}', [AdminVehicleController::class, 'vehicle']);
     Route::get('/web/branchmanager/{id}', [AdminUserController::class, 'branchmanager']);
@@ -83,60 +74,50 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/web/client_name', [AdminClientController::class, 'clients']);
     Route::get('/web/service_center_name/{id}', [AdminServiceCenterController::class, 'service_center']);
 
-    // Mobile
-   Route::resource('/mobile/vehicles', MobileVehicleController::class);
-   Route::resource('/mobile/client', MobileClientController::class);
-   Route::resource('/mobile/services', MobileServiceController::class);
-   Route::resource('/mobile/booking', MobileBookingController::class);
+    
+    // CLIENT APP
+    Route::resource('/mobile/vehicles', MobileVehicleController::class);
+    Route::resource('/mobile/client', MobileClientController::class);
+    Route::resource('/mobile/services', MobileServiceController::class);
+    Route::resource('/mobile/booking', MobileBookingController::class);
 
-   Route::get('/mobile/editclient/{id}', [MobileClientController::class, 'edit_profile']);
-   Route::get('/mobile/notifications', [MobileNotificationController::class, 'notifications']);
-   Route::get('/mobile/promotions', [MobilePromotionController::class, 'promotions']);
-   Route::get('/mobile/upcomingbooking/{id}', [MobileBookingController::class, 'upcoming']);
-   Route::get('/mobile/upcomingbooking24hrs/{id}', [MobileBookingController::class, 'upcoming24hrs']);
-   Route::get('/mobile/records/{id}', [MobileBookingController::class, 'records']);
-   Route::get('/mobile/servicecenters/{category}', [MobileServiceCenterController::class, 'getCategory']);
-   Route::get('/mobile/servicecenters', [MobileServiceCenterController::class, 'getall']);
-   Route::get('/mobile/servicecenterdays/{id}', [MobileServiceCenterController::class, 'getdays']);
-   Route::get('/mobile/service_center/timeslot/{id}/{year}/{month}/{day}',[MobileServiceCenterTimeSlotController::class, 'timeslot']);
-   
+    Route::get('/mobile/editclient/{id}', [MobileClientController::class, 'edit_profile']);
+    Route::get('/mobile/notifications', [MobileNotificationController::class, 'notifications']);
+    Route::get('/mobile/promotions/{id}', [MobilePromotionController::class, 'promotions']);
+    Route::get('/mobile/upcomingbooking/{id}', [MobileBookingController::class, 'upcoming']);
+    Route::get('/mobile/upcomingbooking24hrs/{id}', [MobileBookingController::class, 'upcoming24hrs']);
+    Route::get('/mobile/records/{id}', [MobileBookingController::class, 'records']);
+    Route::get('/mobile/servicecenters/{category}', [MobileServiceCenterController::class, 'getCategory']);
+    Route::get('/mobile/servicecenters', [MobileServiceCenterController::class, 'getall']);
+    Route::get('/mobile/servicecenterdays/{id}', [MobileServiceCenterController::class, 'getdays']);
+    Route::get('/mobile/service_center/timeslot/{id}/{year}/{month}/{day}',[MobileServiceCenterTimeSlotController::class, 'timeslot']);
 
-
-    // done
-    // Route::resource('/users', UserController::class);
-    // Route::resource('/serviceslogo', ServicesLogoController::class);
-    // Route::resource('/services', ServiceController::class);
-    // Route::resource('/servicecenter', ServiceCenterController::class);
-    // Route::resource('/vehicles', VehicleController::class);
-    // Route::resource('/service_center/services', ServiceCenterServicesController::class);
-    // Route::resource('/service_center/timeslot', ServiceCenterTimeSlotController::class);
-    // Route::resource('/service_center/booking', ServiceCenterBookingController::class);
-    // Route::resource('/client', ClientController::class);
-    // Route::resource('/notification', NotificationController::class);
-    // Route::resource('/booking', BookingController::class);
-    // Route::resource('/promotion', PromotionController::class);
-
-    // Route::get('/roles/{id}', [RolesController::class, 'show']);
-    // Route::get('/corporate_account', [UserController::class, 'corporate']);
-    // Route::get('/corporateservicecenter/{id}', [ServiceCenterController::class, 'corporate']);
-    // Route::get('/service_center/vehicle/{id}', [VehicleController::class, 'vehicle']);
-    // Route::get('/service_center/timeslot/{id}/{year}/{month}/{day}',[ServiceCenterTimeSlotController::class, 'timeslot']);
-    // Route::get('/client_name', [ClientController::class, 'clients']);
-    // Route::get('/bookings/service_center/services/{id}', [BookingController::class, 'services']);
-    // Route::get('/bookings/{id}/{year}/{month}/{day}',[BookingController::class, 'timeslot']);
-    // Route::get('/bookings/service_center/{id}',[BookingController::class, 'service_center']);
-
-
-   
-    // Route::get('/servicecenter/services', [ServiceCenterServicesController::class, 'test']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/reports_yearly', [ReportController::class, 'yearly']);
-    Route::get('/reports_yearly/{year}', [ReportController::class, 'yearMonth']);
-    Route::get('/reports_yearlyfilter/{yearStart}/{yearEnd}', [ReportController::class, 'yearlyfilter']);
-    Route::get('/reports_today', [ReportController::class, 'today']);
-    Route::get('/reports_monthly', [ReportController::class, 'monthly']);
-    Route::get('/reports_monthly/{month}/{year}', [ReportController::class, 'monthDay']);
-    Route::get('/reports_monthlyfilter/{monthStart}/{monthEnd}/{year}', [ReportController::class, 'monthlyfilter']);
+    Route::get('/reports_yearly/{id}', [ReportController::class, 'yearly']);
+    Route::get('/reports_yearly/{id}/{year}', [ReportController::class, 'yearMonth']);
+    Route::get('/reports_yearlyfilter/{id}/{yearStart}/{yearEnd}', [ReportController::class, 'yearlyfilter']);
+    Route::get('/reports_today/{id}', [ReportController::class, 'today']);
+    Route::get('/reports_monthly/{id}', [ReportController::class, 'monthly']);
+    Route::get('/reports_monthly/{id}/{month}/{year}', [ReportController::class, 'monthDay']);
+    Route::get('/reports_monthlyfilter/{id}/{monthStart}/{monthEnd}/{year}', [ReportController::class, 'monthlyfilter']);
+
+    // TECHNICIAN APP
+    Route::get('/tech/upcoming', [TechBookingController::class, 'upcoming']);
+    Route::put('/tech/upcoming/{id}', [TechBookingController::class, 'update_upcoming']);
+    Route::get('/tech/intransit', [TechBookingController::class, 'intransit']);
+    Route::put('/tech/intransit/{id}', [TechBookingController::class, 'update_intransit']);
+    Route::get('/tech/inprocess', [TechBookingController::class, 'inprocess']);
+    Route::put('/tech/inprocess/{id}', [TechBookingController::class, 'update_inprocess']);
+    Route::get('/tech/completed', [TechBookingController::class, 'completed']);
+    Route::get('/tech/booking/{id}', [TechBookingController::class, 'details']);
+    Route::get('/tech/service_center/{id}', [TechServiceCenterController::class, 'service_center']);
+
+    Route::get('/tech/info/{id}', [TechUserController::class, 'getDetails']);
+
+
+
+    // testing email
+    // Route::get('/mobile/email/{id}', [MobileBookingController::class, 'email_send']);
 });
 
 Route::post('/changepwd/{id}', [AuthController::class, 'changePass']);
@@ -148,11 +129,10 @@ Route::post('/mobile/client_register', [MobileClientController::class, 'register
 Route::post('/mobile/client_login', [MobileClientController::class, 'login']);
 Route::post('/mobile/client_verify', [MobileClientController::class, 'verification']);
 
-
-// OLD
-// Route::post('/client_register', [ClientController::class, 'register']);
-// Route::post('/client_login', [ClientController::class, 'login']);
-// Route::post('/client_verify', [ClientController::class, 'verification']);
+//Technician
+Route::post('/tech/login', [TechUserController::class, 'login']);
+Route::post('/tech/verify', [TechUserController::class, 'verification']);
+Route::post('/tech/changepwd', [TechUserController::class, 'changePass']);
 
 // Email Verification
 Route::post('/verifyotp_forgotpwd', [OtpController::class, 'verify']);

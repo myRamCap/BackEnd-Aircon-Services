@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('contact_number')->unique();
             $table->string('address');
             $table->boolean('is_activated')->default(0);
+            $table->boolean('active')->default(1);
+            $table->bigInteger('updated_by')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

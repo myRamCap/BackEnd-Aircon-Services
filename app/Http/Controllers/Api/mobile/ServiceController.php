@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
@@ -21,5 +22,9 @@ class ServiceController extends Controller
                 ->orderBy('services.id','desc')
                 ->get()
          ); 
+    }
+
+    public function login_default(Request $request){
+         
     }
 }

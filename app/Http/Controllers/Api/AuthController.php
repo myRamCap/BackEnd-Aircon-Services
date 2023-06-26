@@ -20,18 +20,20 @@ use Illuminate\Support\Facades\Mail;
 class AuthController extends Controller
 {
     public function email_send($email){
-         /** @var User $user */
-         $user = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
 
-         $validToken = rand(100000, 999999);
-         $get_token = new Verifytoken();
-         $get_token->token = $validToken;
-         $get_token->email = $user->email;
-         $get_token->save();
-         $get_user_email = $user->email;
-         $get_user_name = $user->name;
-         Mail::to($user->email)->send(new WelcomeMail($get_user_email, $validToken, $get_user_name));
-         return response($user);
+        $validToken = rand(100000, 999999);
+        $get_token = new Verifytoken();
+        $get_token->token = $validToken;
+        $get_token->email = $user->email;
+        $get_token->save();
+        $get_user_email = $user->email;
+        $get_user_name = $user->name;
+        $mail = new WelcomeMail($get_user_email, $validToken, $get_user_name);
+        $mail->from('admin@mangpogs.com');
+        Mail::to($email)->send($mail);
+        return response($user);
     }
 
     public function forgot_pwd_send($email){
@@ -120,19 +122,15 @@ class AuthController extends Controller
                     'blocked' => 'Your account has been blocked please wait'
                 ], 422);
             } else {
-                $removeToken = UserBlock::where('email', $request->email);
-                $removeToken->delete();
-                $removeToken = LoginAttempt::where('email', $request->email);
-                $removeToken->delete();
+                UserBlock::where('email', $request->email)->delete();
+                LoginAttempt::where('email', $request->email)->delete();
                 $user_email = (new AuthController)->email_send($request->email);
                 return $user_email;
             }
              
         } else {
-            $removeToken = UserBlock::where('email', $request->email);
-            $removeToken->delete();
-            $removeToken = LoginAttempt::where('email', $request->email);
-            $removeToken->delete();
+            UserBlock::where('email', $request->email)->delete();
+            LoginAttempt::where('email', $request->email)->delete();
             $user_email = (new AuthController)->email_send($request->email);
             return $user_email;
         }   
