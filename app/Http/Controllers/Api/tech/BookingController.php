@@ -4,13 +4,28 @@ namespace App\Http\Controllers\Api\tech;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\ManageUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
+    public function available($id) {
+        $sc = ManageUser::where('user_id', $id)->first();
+
+        $available = Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
+        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'longitude', 'latitude', 'booking_date', 'time')
+        ->where('tech_id', null)
+        ->where('bookings.service_center_id', $sc['service_center_id'])
+        ->get();
+        
+        return response([
+            'data' => $available
+        ], 200);
+    }
+
     public function details($id) {
-        $booking = Booking::join('vehicles as b', 'b.id', '=', 'bookings.aircon_id')
+        $booking = Booking::join('aircons as b', 'b.id', '=', 'bookings.aircon_id')
         ->join('clients as c', 'c.id', '=', 'bookings.client_id')
         ->select('bookings.id as booking_id', 'bookings.reference_number', 'bookings.booking_date', DB::raw("DATE_FORMAT(STR_TO_DATE(bookings.time, '%H:%i'), '%h:%i %p') as booking_time"), 'b.aircon_name', 'b.aircon_type', 'b.make', 'b.model', 'b.horse_power', 'b.serial_number', 'b.notes', 'c.first_name', 'c.last_name', 'c.address', 'c.contact_number', 'c.email', 'b.image')
         ->where('bookings.id', $id)
@@ -23,7 +38,7 @@ class BookingController extends Controller
 
     public function completed() {
         $upcoming = Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'booking_date', 'time')
+        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'longitude', 'latitude', 'booking_date', 'time')
         ->where('status', 'Completed')
         ->get();
         
@@ -34,7 +49,7 @@ class BookingController extends Controller
 
     public function inprocess() {
         $upcoming = Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'booking_date', 'time')
+        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'longitude', 'latitude', 'booking_date', 'time')
         ->where('status', 'In Process')
         ->get();
         
@@ -64,7 +79,7 @@ class BookingController extends Controller
 
     public function intransit() {
         $upcoming = Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'booking_date', 'time')
+        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'longitude', 'latitude', 'booking_date', 'time')
         ->where('status', 'In Transit')
         ->get();
         
@@ -94,7 +109,7 @@ class BookingController extends Controller
 
     public function upcoming() {
         $upcoming = Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'booking_date', 'time')
+        ->select('bookings.id as booking_id', 'reference_number', 'first_name', 'last_name', 'address', 'longitude', 'latitude', 'booking_date', 'time')
         ->where('status', 'Up Coming')
         ->get();
         

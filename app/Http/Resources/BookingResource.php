@@ -32,7 +32,8 @@ class BookingResource extends JsonResource
             'time' => $this->time,
             'estimated_time_desc' => $this->estimated_time_desc,
             'notes' => $this->notes,
-            'updated_by' => $this->fn . " " . $this->ln,
+            'tech_id' => $this->tech_id,
+            'updated_by' => $this->fn ? $this->fn . " " . $this->ln : null,
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];

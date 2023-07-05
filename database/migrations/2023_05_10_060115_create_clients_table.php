@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('contact_number')->unique();
             $table->string('address');
+            $table->decimal('longitude', 19, 15);
+            $table->decimal('latitude', 19, 15);
             $table->boolean('is_activated')->default(0);
             $table->boolean('active')->default(1);
             $table->bigInteger('updated_by')->nullable();

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreServiceCenterRequest;
 use App\Http\Requests\UpdateServiceCenterRequest;
 use App\Http\Resources\ServiceCenterResource;
+use App\Models\CorporateInfo;
 use App\Models\ManageUser;
 use App\Models\ServiceCenter;
 use App\Models\ServiceCenterService;
@@ -123,6 +124,7 @@ class ServiceCenterController extends Controller
                 'errors' => [ 'restriction' => ['Not allowed to create another Service Center']]
             ], 422);
         } else {
+            $ref_id = CorporateInfo::where('corporate_id' , $request->corporate_manager_id)->first();
             $data = $request->validated();
             $municipality = $request->municipality;
             $province = $request->province;
@@ -141,16 +143,14 @@ class ServiceCenterController extends Controller
                 $provshortCode = substr($province, 0, 3);
             }
 
-            $data['reference_number'] = $munshortCode.'-'.$provshortCode;
-
             $service_center = ServiceCenter::create($data);
-            // $reference_number = $munshortCode.'-'.$provshortCode;
-            // $service_center = ServiceCenter::find($service_center->id);
-            // $service_center->reference_number = $reference_number;
-
+            
             $id = $service_center->id;
+            $formatted_id = sprintf('%02d', $id);
+            $reference_number = $munshortCode . '-' . $provshortCode . '-' . $ref_id['reference_id'];
+
             $service_center = ServiceCenter::find($service_center->id);
-            $service_center->reference_number = $service_center->reference_number.'-'.$id;
+            $service_center->reference_number = $reference_number . '-' . $formatted_id;
             $service_center->save();
            
             
@@ -167,11 +167,11 @@ class ServiceCenterController extends Controller
     {
         $user = User::where('id', $id)->first();
         
-        if ($user['role_id'] == 1) {
+        if ($user['role_id'] == 2) {
             return ServiceCenterResource::collection(
                 ServiceCenter::orderBy('id','desc')->get()
             ); 
-        } else if ($user['role_id'] == 2) {
+        } else if ($user['role_id'] == 1) {
             return ServiceCenterResource::collection(
                 ServiceCenter::where('corporate_manager_id', $id)->orderBy('id','desc')->get()
             ); 

@@ -24,7 +24,7 @@ class ServiceCenterServicesResource extends JsonResource
             'price' => $this->price,
             'name' => $this->name,
             'details' => $this->details,
-            'image_url' => $this->image_url,
+            // 'image_url' => $this->image_url,
             'price' => $this->price,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];

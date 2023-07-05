@@ -16,10 +16,10 @@ class ServiceCenterBookingController extends Controller
      * Display the upcoming booking of the client .
      */
     public function upcoming($id) {
-        $query = DB::select("SELECT a.id, b.name as service_center, d.vehicle_name, c.name as services, a.booking_date, a.time  FROM bookings a
+        $query = DB::select("SELECT a.id, b.name as service_center, d.aircon_name, c.name as services, a.booking_date, a.time  FROM bookings a
                     INNER JOIN service_centers b ON a.service_center_id = b.id
                     INNER JOIN services c ON a.services_id = c.id
-                    INNER JOIN vehicles d ON a.vehicle_id = d.id
+                    INNER JOIN aircons d ON a.aircon_id = d.id
                     WHERE a.client_id = $id AND a.booking_date > CURRENT_DATE() OR (a.client_id = $id AND a.booking_date = CURRENT_DATE() AND a.time > CURRENT_TIME());
                 ");
 
@@ -27,10 +27,10 @@ class ServiceCenterBookingController extends Controller
     }
 
     public function records($id) {
-        $query = DB::select("SELECT a.id, b.name as service_center, d.vehicle_name, c.name as services, a.booking_date, a.time, a.status  FROM bookings a
+        $query = DB::select("SELECT a.id, b.name as service_center, d.aircon_name, c.name as services, a.booking_date, a.time, a.status  FROM bookings a
                     INNER JOIN service_centers b ON a.service_center_id = b.id
                     INNER JOIN services c ON a.services_id = c.id
-                    INNER JOIN vehicles d ON a.vehicle_id = d.id
+                    INNER JOIN aircons d ON a.aircon_id = d.id
                     WHERE a.client_id = $id AND a.booking_date < CURRENT_DATE() OR (a.client_id = $id AND a.booking_date = CURRENT_DATE() AND a.time < CURRENT_TIME());
                 ");
 
@@ -44,14 +44,14 @@ class ServiceCenterBookingController extends Controller
     {
         return ServiceCenterBookingResource::collection(
             Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-                ->join('vehicles', 'vehicles.id', '=', 'bookings.vehicle_id')
+                ->join('aircons', 'aircons.id', '=', 'bookings.aircon_id')
                 ->join('services', 'services.id', '=', 'bookings.services_id')
                 ->join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
                 ->join('service_center_services', function ($join) {
                     $join->on('service_center_services.service_id', '=', 'services.id')
                          ->on('service_center_services.service_center_id', '=', 'service_centers.id');
                 })
-                ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'vehicles.vehicle_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number')
+                ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'aircons.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number')
                 ->orderBy('bookings.id','desc')
                 ->get()
         );
@@ -72,7 +72,7 @@ class ServiceCenterBookingController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'client_id' => 'required|integer',
-            'vehicle_id' => 'required|integer',
+            'aircon_id' => 'required|integer',
             'services_id' => 'required|integer',
             'service_center_id' => 'required|integer',
             'status' => 'nullable|string',
@@ -91,7 +91,7 @@ class ServiceCenterBookingController extends Controller
 
         $data = [
             'client_id' => $request->client_id,
-            'vehicle_id' => $request->vehicle_id,
+            'aircon_id' => $request->aircon_id,
             'services_id' => $request->services_id,
             'service_center_id' => $request->service_center_id,
             'status' => 'Up Coming',
@@ -146,11 +146,11 @@ class ServiceCenterBookingController extends Controller
     {
          return ServiceCenterBookingResource::collection(
             Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-                ->join('vehicles', 'vehicles.id', '=', 'bookings.vehicle_id')
+                ->join('aircons', 'aircons.id', '=', 'bookings.aircon_id')
                 ->join('services', 'services.id', '=', 'bookings.services_id')
                 ->join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
                 ->join('service_center_services', 'service_center_services.service_id', '=', 'services.id')
-                ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'vehicles.vehicle_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number')
+                ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'aircons.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number')
                 ->where('service_center_services.service_center_id',$id)
                 ->orderBy('bookings.id','desc')
                 ->get()
@@ -174,7 +174,7 @@ class ServiceCenterBookingController extends Controller
 
         $booking = Booking::find($request->id);
         $booking->client_id = $request->client_id;
-        $booking->vehicle_id = $request->vehicle_id;
+        $booking->aircon_id = $request->aircon_id;
         $booking->services_id = $request->services_id;
         $booking->service_center_id = $request->service_center_id;
         $booking->status = $request->status;

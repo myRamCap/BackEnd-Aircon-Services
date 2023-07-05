@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Service;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreServiceRequest extends FormRequest
@@ -21,8 +22,23 @@ class StoreServiceRequest extends FormRequest
      */
     public function rules(): array
     {
+        $serviceCenterId = $this->input('service_center_id');
+        $service = $this->input('name');
         return [
-            'name' => 'required|string|unique:services,name',
+            'name' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($serviceCenterId, $service) {
+                    $existingRecord = Service::where('name', $service)
+                        ->where('service_center_id', '=', $serviceCenterId)
+                        ->first();
+    
+                    if ($existingRecord) {
+                        $fail("The name has already been taken.");
+                    }
+                },
+            ],
+            // 'name' => 'required|string|unique:services,name',
             'details' => 'required|string',
             'service_center_id' => 'required|integer',
             'image_id' => 'integer|nullable',

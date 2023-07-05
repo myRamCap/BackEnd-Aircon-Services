@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('status');
             $table->date('booking_date');
             $table->string('time');
+            $table->string('tech_id', 255)->nullable();
             $table->text('notes')->nullable();
             $table->bigInteger('updated_by')->nullable();
             $table->timestamps();

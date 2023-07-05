@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\CorporateInfo;
 use App\Models\ManageUser;
+use App\Models\ServiceCenter;
+use App\Models\TechInfo;
 use App\Models\User;
 use App\Models\UserRestriction;
 use Illuminate\Http\Request;
@@ -14,6 +17,29 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    //  $corporateInfo = CorporateInfo::latest()->first();
+    public function testing() {
+        $latest_tech_ref_id = 'BEL-ANT-A01-03-T99';
+
+        // Extract the numeric part from the tech reference number
+        $numeric_part = substr($latest_tech_ref_id, -2);
+        
+        // Increment the numeric part by converting it to an integer
+        $next_numeric_part = intval($numeric_part) + 1;
+        
+        // Pad the numeric part with leading zeros if necessary
+        $padded_numeric_part = str_pad($next_numeric_part, 2, '0', STR_PAD_LEFT);
+        
+        // Generate the next tech reference number by combining the prefix and the incremented numeric part
+        $next_tech_ref_number =   'T' . $padded_numeric_part;
+        
+        return $next_tech_ref_number;
+        
+
+
+        
+    }
+
     /** 
      * Display a listing of the role branch manager.
      */
@@ -60,14 +86,44 @@ class UserController extends Controller
 
             if ($request->user_role == 1) { 
                 if ($request->role_id == 1) {
-                    
                     $user = User::create($data);
                 } else {
                     $user = User::create($data);
+                    $corporateInfo = CorporateInfo::latest()->first();
+                    $ref = $corporateInfo['reference_id'] ?? null;
+
+                    if ($ref) {
+                        $letter = $ref[0];
+                        $number = intval(substr($ref, 1));
+
+                        if ($number == 99) {
+                            // Increment the letter
+                            $letter++;
+                            if ($letter == 'Z') {
+                                $letter = 'A'; // Reset to 'A' if it reaches 'Z'
+                            }
+
+                            // Reset the number
+                            $number = 0;
+                        } else {
+                            $number++;
+                        }
+
+                        $str1 = str_pad($number, 2, '0', STR_PAD_LEFT);
+                        $reference_id = $letter . $str1;
+                    } else {
+                        $reference_id = 'A00';
+                    }
+
                     UserRestriction::create([
                         'user_id' => $user->id,
                         'allowed_sc' => $request->allowed_sc,
                         'allowed_bm' => $request->allowed_bm
+                    ]);
+
+                    CorporateInfo::create([
+                        'corporate_id' => $user->id,
+                        'reference_id' => $reference_id,
                     ]);
                 }
                 
@@ -85,17 +141,61 @@ class UserController extends Controller
                         'errors' => [ 'restriction' => ['Not allowed to create another Branch Manager']]
                     ], 422);
                 } else {
-                    $user = User::create($data);
-                    ManageUser::create([
-                        'user_id' => $user->id,
-                        'service_center_id' => $request->service_center_id,
-                        'corporate_manager_id' => $request->user_id,
-                        'branch_manager_id' => $request->branch_manager_id
-                    ]);
+                    if ($request->role_id == 3) {
+                        $user = User::create($data);
+                        ManageUser::create([
+                            'user_id' => $user->id,
+                            'service_center_id' => $request->service_center_id,
+                            'corporate_manager_id' => $request->user_id,
+                            'branch_manager_id' => $request->branch_manager_id
+                        ]);
+                    } else {
+                        $sc = ServiceCenter::where('id', $request->service_center_id)->first();
+                        $latest_tech_ref_id = TechInfo::where('service_center_id',  $request->service_center_id)->latest()->first();
+
+                        if ($latest_tech_ref_id) {
+                            // Extract the numeric part from the tech reference number
+                            $numeric_part = substr($latest_tech_ref_id['tech_ref_id'], -2);
+                            
+                            // Increment the numeric part by converting it to an integer
+                            $next_numeric_part = intval($numeric_part) + 1;
+                            
+                            // Pad the numeric part with leading zeros if necessary
+                            $padded_numeric_part = str_pad($next_numeric_part, 2, '0', STR_PAD_LEFT);
+                            
+                            // Generate the next tech reference number by combining the prefix and the incremented numeric part
+                            $next_tech_ref_number =   'T' . $padded_numeric_part;
+                        } else {
+                            $next_tech_ref_number = 'T01';
+                        }
+                        
+
+    
+
+                        $user = User::create($data);
+                        ManageUser::create([
+                            'user_id' => $user->id,
+                            'service_center_id' => $request->service_center_id,
+                            'corporate_manager_id' => $request->user_id,
+                            'branch_manager_id' => $request->branch_manager_id
+                        ]);
+                        TechInfo::create([
+                            'service_center_id' => $request->service_center_id, 
+                            'tech_id' => $user->id,
+                            'tech_ref_id' => $sc['reference_number'] . '-' . $next_tech_ref_number,
+                        ]);
+                    }
+                    
                 }
                 
             } else if ($request->user_role == 3) {
                 $corporate = ManageUser::where('user_id', $request->user_id)->first();
+                $sc = ServiceCenter::where('id', $request->service_center_id)->first();
+                $latest_tech_ref_id = TechInfo::where('service_center_id',  $request->service_center_id)->latest()->first();
+                $latest_tech_ref_number = $latest_tech_ref_id ? intval(substr($latest_tech_ref_id['tech_ref_id'], 1)) : 0;
+                $next_tech_ref_number = $latest_tech_ref_number + 1;
+                $next_tech_ref_id = 'T' . str_pad($next_tech_ref_number, 2, '0', STR_PAD_LEFT);
+
                 $user = User::create($data);
                 ManageUser::create([
                     'user_id' => $user->id,
@@ -103,6 +203,14 @@ class UserController extends Controller
                     'corporate_manager_id' => $corporate['corporate_manager_id'],
                     'branch_manager_id' => $request->user_id    
                 ]);
+                TechInfo::create([
+                    'service_center_id' => $corporate['service_center_id'], 
+                    'tech_id' => $user->id, 
+                    'tech_ref_id' => $sc['reference_number'] . '-' . $next_tech_ref_id,
+                ]);
+
+
+                
             }
 
             return response(new UserResource($user), 201);
@@ -129,7 +237,7 @@ class UserController extends Controller
             // return DB::getQueryLog(); 
         }else if ($user['role_id'] == 2) {
             return UserResource::collection(
-               DB::select("SELECT a.*, b.name, d.id as service_center_id, d.name as service_center, concat(e.first_name, ' ', e.last_name) as branch_manager, CONCAT(f.first_name, ' ', f.last_name) as created_by, CONCAT(g.first_name, ' ', g.last_name) as updated_by
+               DB::select("SELECT a.*, h.tech_ref_id, b.name, d.id as service_center_id, d.name as service_center, concat(e.first_name, ' ', e.last_name) as branch_manager, CONCAT(f.first_name, ' ', f.last_name) as created_by, CONCAT(g.first_name, ' ', g.last_name) as updated_by
                     FROM users a
                     INNER JOIN roles b ON a.role_id = b.id
                     INNER JOIN (
@@ -141,12 +249,13 @@ class UserController extends Controller
                     LEFT JOIN users e ON c.branch_manager_id = e.id
                     LEFT JOIN users f ON f.id = a.created_by
                     LEFT JOIN users g ON g.id = a.updated_by
+                    LEFT JOIN tech_infos h ON h.tech_id = a.id
                     ORDER BY a.id DESC")
             ); 
         }
         else if ($user['role_id'] == 3) {
             return UserResource::collection(
-               DB::select("SELECT a.*, b.name, CONCAT(f.first_name, ' ', f.last_name) as created_by, CONCAT(g.first_name, ' ', g.last_name) as updated_by
+               DB::select("SELECT a.*, h.tech_ref_id, b.name, CONCAT(f.first_name, ' ', f.last_name) as created_by, CONCAT(g.first_name, ' ', g.last_name) as updated_by
                     FROM users a
                     INNER JOIN roles b ON a.role_id = b.id
                     INNER JOIN (
@@ -156,6 +265,7 @@ class UserController extends Controller
                     ) c ON a.id = c.user_id
                     LEFT JOIN users f ON f.id = a.created_by
                     LEFT JOIN users g ON g.id = a.updated_by
+                    LEFT JOIN tech_infos h ON h.tech_id = a.id
                     ORDER BY a.id DESC")
             ); 
         }else if ($user['role_id'] == 4) {

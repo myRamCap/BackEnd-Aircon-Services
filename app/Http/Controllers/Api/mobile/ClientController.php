@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientsResource;
 use App\Models\Client;
+use App\Models\ClientTemp;
 use App\Models\ClientToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -44,30 +45,30 @@ class ClientController extends Controller
     }
 
     public function otp_send($contact_number) {
-        if (!$contact_number == '09123456789') {
-            $validToken = rand(100000, 999999);
+        if ($contact_number != '09123456789') {
+            $validToken = rand(1000, 9999);
             $get_token = new ClientToken();
             $get_token->token = $validToken;
             $get_token->contact_number = $contact_number;
             $get_token->save();
 
 
-            $ch = curl_init();
-            $parameters = array(
-                'apikey' => 'fb78b4c7aa9d8bc5d994a1b4b39f13a5', //Your API KEY
-                'number' => $contact_number,
-                'message' => $validToken.' is you authentication code. for your protection, do not share this code with anyone.',
-            );
-            curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
-            curl_setopt( $ch, CURLOPT_POST, 1 );
+            // $ch = curl_init();
+            // $parameters = array(
+            //     'apikey' => 'fb78b4c7aa9d8bc5d994a1b4b39f13a5', //Your API KEY
+            //     'number' => $contact_number,
+            //     'message' => $validToken.' is your authentication code for MangPogs, for your protection do not share this code with anyone.',
+            // );
+            // curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
+            // curl_setopt( $ch, CURLOPT_POST, 1 );
 
-            //Send the parameters set above with the request
-            curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
+            // //Send the parameters set above with the request
+            // curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $parameters ) );
 
-            // Receive response from server
-            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-            $output = curl_exec( $ch );
-            curl_close ($ch);
+            // // Receive response from server
+            // curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+            // $output = curl_exec( $ch );
+            // curl_close ($ch);
 
             return response([
                 'success' => true,
@@ -83,7 +84,9 @@ class ClientController extends Controller
             'last_name' => 'string',
             'email' => 'required|email|unique:clients,email',
             'contact_number' => 'required|string|unique:clients,contact_number',
-            'address' => 'string'
+            'address' => 'string',
+            'longitude' => 'required|numeric|regex:/^\d{0,4}\.\d{1,15}$/',
+            'latitude' => 'required|numeric|regex:/^\d{0,4}\.\d{1,15}$/',
         ]);
 
          if ($validator->fails()){
@@ -96,9 +99,11 @@ class ClientController extends Controller
             'email' => $request->email,
             'contact_number' => $request->contact_number,
             'address' => $request->address,
+            'longitude' => $request->longitude,
+            'latitude' => $request->latitude,
         ];
 
-        Client::create($data);
+        ClientTemp::create($data);
 
         $user_email = (new ClientController)->otp_send($request->contact_number);
         return $user_email;
@@ -117,6 +122,7 @@ class ClientController extends Controller
 
         $check_token = ClientToken::where('token',$request->token)->where('contact_number',$request->contact_number)->where('is_activated', 0)->where('is_expired', 0)->first();
         $is_activated = Client::where('contact_number',$request->contact_number)->first(); 
+        $temp = ClientTemp::where('contact_number',$request->contact_number)->first(); 
 
         // return($check_token);
 
@@ -126,6 +132,35 @@ class ClientController extends Controller
                 $user = $is_activated['first_name']." ".$is_activated['last_name'];
                 $data = $is_activated;
                 $token = $is_activated->createToken('main')->plainTextToken;
+                // $is_activated->remember_token = $token;
+                // $is_activated->save();
+
+                return response(compact('user','token', 'user_id', 'data')); 
+
+            } else if ($temp) {
+                $data = [
+                    'first_name' => $temp['first_name'],
+                    'last_name' => $temp['last_name'],
+                    'email' => $temp['email'],
+                    'contact_number' => $temp['contact_number'],
+                    'address' => $temp['address'],
+                    'longitude' => $temp['longitude'],
+                    'latitude' => $temp['latitude'],
+                    'is_activated' => 1,
+                ];
+
+                $data = Client::create($data);
+
+                // Remove Client Temp
+                $remove_client_temp= ClientTemp::find($temp['id'])->delete();
+
+                // Remove Client TOkens
+                $remove_token = ClientToken::where('contact_number', $temp['contact_number'])->delete();
+
+                $user_id = $data->id;
+                $user = $temp['first_name']." ".$temp['last_name'];
+                $data = $data;
+                $token = $data->createToken('main')->plainTextToken;
                 // $is_activated->remember_token = $token;
                 // $is_activated->save();
 
@@ -157,15 +192,15 @@ class ClientController extends Controller
             'contact_number' => 'required'
         ]);
 
+        if ($validator->fails()){
+            return response($validator->errors(), 422);
+        }
+
 
         if ($request->contact_number == '09123456789') {
             return response('Test Account', 200);
 
         } else {
-            if ($validator->fails()){
-                return response($validator->errors(), 422);
-            }
-    
             $client = Client::where('contact_number',$request->contact_number)->first();
             
             if (!$client){

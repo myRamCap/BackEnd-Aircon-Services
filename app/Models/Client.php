@@ -17,7 +17,9 @@ class Client extends Model
         'email',
         'contact_number',
         'address',
-        'active'
+        'active',
+        'longitude',
+        'latitude'
     ];
 
     /**

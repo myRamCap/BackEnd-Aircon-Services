@@ -244,7 +244,7 @@ class BookingController extends Controller
         if ($user['role_id'] == 1) {
             return BookingResource::collection(
                 Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-                    ->join('vehicles', 'vehicles.id', '=', 'bookings.aircon_id')
+                    ->join('aircons', 'aircons.id', '=', 'bookings.aircon_id')
                     ->join('services', 'services.id', '=', 'bookings.services_id')
                     ->join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
                     ->join('service_center_services', function ($join) {
@@ -252,28 +252,14 @@ class BookingController extends Controller
                             ->on('service_center_services.service_center_id', '=', 'bookings.service_center_id');
                     })
                     ->leftjoin('users', 'users.id', '=', 'bookings.updated_by')
-                    ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'vehicles.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number', 'users.first_name as fn', 'users.last_name as ln')
+                    ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'aircons.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number', 'users.first_name as fn', 'users.last_name as ln')
                     ->orderBy('bookings.id','desc')
                     ->get()
             );
         } else if ($user['role_id'] == 2) {
-            // $query = Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-            // ->join('vehicles', 'vehicles.id', '=', 'bookings.aircon_id')
-            // ->join('services', 'services.id', '=', 'bookings.services_id')
-            // ->join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
-            // ->join('service_center_services', function ($join) {
-            //     $join->on('service_center_services.service_id', '=', 'services.id')
-            //         ->on('service_center_services.service_center_id', '=', 'bookings.service_center_id');
-            // })
-            // ->leftjoin('users', 'users.id', '=', 'bookings.updated_by')
-            // ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'vehicles.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number', 'users.first_name as fn', 'users.last_name as ln')
-            // ->where('service_centers.corporate_manager_id', $id)
-            // ->orderBy('bookings.id','desc')
-            // ->get();
-
             return BookingResource::collection(
                 Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-                    ->join('vehicles', 'vehicles.id', '=', 'bookings.aircon_id')
+                    ->join('aircons', 'aircons.id', '=', 'bookings.aircon_id')
                     ->join('services', 'services.id', '=', 'bookings.services_id')
                     ->join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
                     ->join('service_center_services', function ($join) {
@@ -281,7 +267,7 @@ class BookingController extends Controller
                             ->on('service_center_services.service_center_id', '=', 'bookings.service_center_id');
                     })
                     ->leftjoin('users', 'users.id', '=', 'bookings.updated_by')
-                    ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'vehicles.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number', 'users.first_name as fn', 'users.last_name as ln')
+                    ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'aircons.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number', 'users.first_name as fn', 'users.last_name as ln')
                     ->where('service_centers.corporate_manager_id', $id)
                     ->orderBy('bookings.id','desc')
                     ->get()
@@ -291,7 +277,7 @@ class BookingController extends Controller
 
             return BookingResource::collection(
                     Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-                    ->join('vehicles', 'vehicles.id', '=', 'bookings.aircon_id')
+                    ->join('aircons', 'aircons.id', '=', 'bookings.aircon_id')
                     ->join('services', 'services.id', '=', 'bookings.services_id')
                     ->join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
                     ->join('service_center_services', function ($join) {
@@ -299,7 +285,7 @@ class BookingController extends Controller
                             ->on('service_center_services.service_center_id', '=', 'bookings.service_center_id');
                     })
                     ->leftjoin('users', 'users.id', '=', 'bookings.updated_by')
-                    ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'vehicles.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number', 'users.first_name as fn', 'users.last_name as ln')
+                    ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'aircons.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number', 'users.first_name as fn', 'users.last_name as ln')
                     ->where('service_centers.id', $sc_id['service_center_id'])
                     ->orderBy('bookings.id','desc')
                     ->get()

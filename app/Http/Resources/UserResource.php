@@ -31,6 +31,7 @@ class UserResource extends JsonResource
             'contact_number' => $this->contact_number,
             'role_id' => $this->role_id,
             'role_name' => $this->name,
+            'tech_ref_id' => $this->tech_ref_id ?? null,
             'service_center_id' => $this->service_center_id ?? null,
             'service_center' => $this->service_center ?? null,
             'branch_manager' => $this->branch_manager ?? null,

@@ -24,7 +24,7 @@ class StoreBookingRequest extends FormRequest
     {
         return [
             'client_id' => 'required|integer',
-            'vehicle_id' => 'required|integer',
+            'aircon_id' => 'required|integer',
             'services_id' => 'required|integer',
             'service_center_id' => 'required|integer',
             'status' => 'required|string',

@@ -13,7 +13,9 @@ use App\Http\Controllers\Api\admin\ServiceCenterTimeSlotController as AdminServi
 use App\Http\Controllers\Api\admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Api\admin\ServicesLogoController as AdminServicesLogoController;
 use App\Http\Controllers\Api\admin\UserController as AdminUserController;
-use App\Http\Controllers\Api\admin\VehicleController as AdminVehicleController;
+use App\Http\Controllers\Api\admin\AirconController as AdminAirconController;
+use App\Http\Controllers\Api\admin\RatingController as AdminRatingController;
+use App\Http\Controllers\Api\admin\ServiceCostController as AdminServiceCostController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\mobile\BookingController as MobileBookingController;
 use App\Http\Controllers\Api\mobile\ClientController as MobileClientController;
@@ -22,7 +24,8 @@ use App\Http\Controllers\Api\mobile\promotionController as MobilePromotionContro
 use App\Http\Controllers\Api\mobile\ServiceCenterController as MobileServiceCenterController;
 use App\Http\Controllers\Api\mobile\ServiceCenterTimeSlotController as MobileServiceCenterTimeSlotController;
 use App\Http\Controllers\Api\mobile\ServiceController as MobileServiceController;
-use App\Http\Controllers\Api\mobile\VehicleController as MobileVehicleController;
+use App\Http\Controllers\Api\mobile\AirconController as MobileAirconController;
+use App\Http\Controllers\Api\mobile\RatingController as MobileRatingController;
 use App\Http\Controllers\Api\OTP\OtpController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\tech\BookingController as TechBookingController;
@@ -51,7 +54,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/web/serviceslogo', AdminServicesLogoController::class);
     Route::resource('/web/services', AdminServiceController::class);
     Route::resource('/web/servicecenter', AdminServiceCenterController::class);
-    Route::resource('/web/vehicles', AdminVehicleController::class);
+    Route::resource('/web/aircons', AdminAirconController::class);
     Route::resource('/web/service_center/services', AdminServiceCenterServicesController::class);
     Route::resource('/web/service_center/operationtime', AdminOperationTimeController::class);
     Route::resource('/web/service_center/timeslot', AdminServiceCenterTimeSlotController::class);
@@ -60,10 +63,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/web/notification', AdminNotificationController::class);
     Route::resource('/web/booking', AdminBookingController::class);
     Route::resource('/web/promotion', AdminPromotionController::class);
+    Route::resource('/web/servicecost', AdminServiceCostController::class);
 
+    Route::get('/web/testing', [AdminUserController::class, 'testing']);
+
+    Route::get('/web/rating/{id}', [AdminRatingController::class, 'rating']);
     Route::get('/web/service_center/operation/{id}', [AdminOperationTimeController::class, 'operation']);
     Route::get('/web/corporate_account', [AdminUserController::class, 'corporate']);
-    Route::get('/web/service_center/vehicle/{id}', [AdminVehicleController::class, 'vehicle']);
+    Route::get('/web/service_center/aircon/{id}', [AdminAirconController::class, 'aircon']);
     Route::get('/web/branchmanager/{id}', [AdminUserController::class, 'branchmanager']);
     Route::get('/web/service_center/timeslot/{id}/{year}/{month}/{day}',[AdminServiceCenterTimeSlotController::class, 'timeslot']);
     Route::get('/web/bookings/service_center/services/{id}', [AdminBookingController::class, 'services']);
@@ -76,11 +83,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     
     // CLIENT APP
-    Route::resource('/mobile/vehicles', MobileVehicleController::class);
+    Route::resource('/mobile/aircons', MobileAirconController::class);
     Route::resource('/mobile/client', MobileClientController::class);
     Route::resource('/mobile/services', MobileServiceController::class);
     Route::resource('/mobile/booking', MobileBookingController::class);
 
+    Route::post('/mobile/rating', [MobileRatingController::class, 'rating']);
     Route::get('/mobile/editclient/{id}', [MobileClientController::class, 'edit_profile']);
     Route::get('/mobile/notifications', [MobileNotificationController::class, 'notifications']);
     Route::get('/mobile/promotions/{id}', [MobilePromotionController::class, 'promotions']);
@@ -111,8 +119,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/tech/completed', [TechBookingController::class, 'completed']);
     Route::get('/tech/booking/{id}', [TechBookingController::class, 'details']);
     Route::get('/tech/service_center/{id}', [TechServiceCenterController::class, 'service_center']);
-
     Route::get('/tech/info/{id}', [TechUserController::class, 'getDetails']);
+    Route::get('/tech/available/{id}', [TechBookingController::class, 'available']);
 
     // testing email
     // Route::get('/mobile/email/{id}', [MobileBookingController::class, 'email_send']);

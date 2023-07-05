@@ -49,7 +49,7 @@ class BookingController extends Controller
     public function upcoming24hrs($id) {
         $query = DB::select("SELECT a.reference_number, b.aircon_name, c.name AS services, d.name AS service_center, a.booking_date, a.time, a.client_id
                         FROM bookings a
-                        INNER JOIN vehicles b ON a.aircon_id = b.id
+                        INNER JOIN aircons b ON a.aircon_id = b.id
                         INNER JOIN services c ON a.services_id = c.id
                         INNER JOIN service_centers d ON a.service_center_id = d.id
                         WHERE a.client_id = $id AND (CONCAT(booking_date, ' ', time) >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
@@ -67,7 +67,7 @@ class BookingController extends Controller
         $query = DB::select("SELECT a.reference_number, b.name as service_center, d.aircon_name, c.name as services, a.booking_date, a.time  FROM bookings a
                     INNER JOIN service_centers b ON a.service_center_id = b.id
                     INNER JOIN services c ON a.services_id = c.id
-                    INNER JOIN vehicles d ON a.aircon_id = d.id
+                    INNER JOIN aircons d ON a.aircon_id = d.id
                     WHERE a.client_id = $id AND a.booking_date > CURRENT_DATE() OR (a.client_id = $id AND a.booking_date = CURRENT_DATE() AND a.time > CURRENT_TIME());
                 ");
 
@@ -78,7 +78,7 @@ class BookingController extends Controller
         $query = DB::select("SELECT a.reference_number, b.name as service_center, d.aircon_name, c.name as services, a.booking_date, a.time, a.status  FROM bookings a
                     INNER JOIN service_centers b ON a.service_center_id = b.id
                     INNER JOIN services c ON a.services_id = c.id
-                    INNER JOIN vehicles d ON a.aircon_id = d.id
+                    INNER JOIN aircons d ON a.aircon_id = d.id
                     WHERE a.client_id = $id
                     --  AND a.booking_date < CURRENT_DATE() OR (a.client_id = $id AND a.booking_date = CURRENT_DATE() AND a.time < CURRENT_TIME());
                 ");
@@ -93,14 +93,14 @@ class BookingController extends Controller
     {
         return ServiceCenterBookingResource::collection(
             Booking::join('clients', 'clients.id', '=', 'bookings.client_id')
-                ->join('vehicles', 'vehicles.id', '=', 'bookings.aircon_id')
+                ->join('aircons', 'aircons.id', '=', 'bookings.aircon_id')
                 ->join('services', 'services.id', '=', 'bookings.services_id')
                 ->join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
                 ->join('service_center_services', function ($join) {
                     $join->on('service_center_services.service_id', '=', 'services.id')
                          ->on('service_center_services.service_center_id', '=', 'service_centers.id');
                 })
-                ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'vehicles.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number')
+                ->select('bookings.*', 'service_centers.name as service_center', 'services.name as service', 'aircons.aircon_name', 'service_center_services.estimated_time_desc', 'clients.first_name', 'clients.last_name', 'clients.contact_number')
                 ->orderBy('bookings.id','desc')
                 ->get()
         );
