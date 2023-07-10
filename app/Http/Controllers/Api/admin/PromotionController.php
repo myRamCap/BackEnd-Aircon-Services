@@ -79,17 +79,17 @@ class PromotionController extends Controller
             //     ")
             // );
       
-            return PromotionResource::collection(
-                // Promotion::where('corporate_account_id', '=', $id)
-                //     ->orderBy('id','desc')
-                //     ->get()
-                DB::select("SELECT a.*, CONCAT(b.first_name, ' ', b.last_name) AS created_by, CONCAT(c.first_name, ' ', c.last_name) AS updated_by 
-                FROM promotions a
-                LEFT JOIN users b ON a.created_by = b.id
-                LEFT JOIN users c ON a.updated_by = c.id
-                WHERE a.corporate_account_id = $id
-                ORDER BY a.id DESC")
-            );
+            // return PromotionResource::collection(
+            //     // Promotion::where('corporate_account_id', '=', $id)
+            //     //     ->orderBy('id','desc')
+            //     //     ->get()
+            //     DB::select("SELECT a.*, CONCAT(b.first_name, ' ', b.last_name) AS created_by, CONCAT(c.first_name, ' ', c.last_name) AS updated_by 
+            //     FROM promotions a
+            //     LEFT JOIN users b ON a.created_by = b.id
+            //     LEFT JOIN users c ON a.updated_by = c.id
+            //     WHERE a.corporate_account_id = $id
+            //     ORDER BY a.id DESC")
+            // );
         } else if ($user['role_id'] == 3) {
             $sc = ManageUser::where('user_id', '=', $id)->first();
             $cs_id = $sc['service_center_id'];

@@ -114,7 +114,7 @@
                                 </tr>
                                 <tr>
                                     <td align="center" class="center-text">
-                                        <img style="width:190px;border:0px;display: inline!important;" src="<?php echo e(asset('storage/images/mangpogs.png')); ?>" width="190" border="0"       alt="intro">
+                                        <img style="width:190px;border:0px;display: inline!important;" src="<?php echo e(asset('master/mangpogs.png')); ?>" width="190" border="0"       alt="intro">
                                     </td>
                                 </tr>
                                 <tr>
@@ -231,7 +231,7 @@
                                                                         <tr>
                                                                             <td width="10"></td>
                                                                             <td align="center">
-                                                                                <a href="<?php echo e(config('pleb.mail.facebook_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('storage/images/fb.png')); ?>" width="36" border="0"       alt="icon"></a>
+                                                                                <a href="<?php echo e(config('pleb.mail.facebook_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('master/fb.png')); ?>" width="36" border="0"       alt="icon"></a>
                                                                             </td>
                                                                             <td width="10"></td>
                                                                         </tr>
@@ -244,7 +244,7 @@
                                                                         <tr>
                                                                             <td width="10"></td>
                                                                             <td align="center">
-                                                                                <a href="<?php echo e(config('pleb.mail.youtube_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('storage/images/youtube.png')); ?>" width="36" border="0"       alt="icon"></a>
+                                                                                <a href="<?php echo e(config('pleb.mail.youtube_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('master/youtube.png')); ?>" width="36" border="0"       alt="icon"></a>
                                                                             </td>
                                                                             <td width="10"></td>
                                                                         </tr>
@@ -257,7 +257,7 @@
                                                                         <tr>
                                                                             <td width="10"></td>
                                                                             <td align="center">
-                                                                                <a href="<?php echo e(config('pleb.mail.linkedin_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('storage/images/linkedin.png')); ?>" width="36" border="0"       alt="icon"></a>
+                                                                                <a href="<?php echo e(config('pleb.mail.linkedin_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('master/linkedin.png')); ?>" width="36" border="0"       alt="icon"></a>
                                                                             </td>
                                                                             <td width="10"></td>
                                                                         </tr>
@@ -270,7 +270,7 @@
                                                                         <tr>
                                                                             <td width="10"></td>
                                                                             <td align="center">
-                                                                                <a href="<?php echo e(config('pleb.mail.tiktok_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('storage/images/tiktok.png')); ?>" width="36" border="0"       alt="icon"></a>
+                                                                                <a href="<?php echo e(config('pleb.mail.tiktok_url')); ?>"><img style="width:36px;border:0px;display: inline!important;" src="<?php echo e(asset('master/tiktok.png')); ?>" width="36" border="0"       alt="icon"></a>
                                                                             </td>
                                                                             <td width="10"></td>
                                                                         </tr>
@@ -320,11 +320,11 @@
                                                         <table border="0" align="center" cellpadding="0" cellspacing="0" role="presentation">
                                                             <tr  >
                                                                 <td align="center">
-                                                                    <a href="<?php echo e(config('pleb.mail.ios_url')); ?>"><img style="display:block;width:100%;max-width:117px;border:0px;"    width="117" src="<?php echo e(asset('storage/images/App-Store.png')); ?>" border="0"  alt="icon"></a>
+                                                                    <a href="<?php echo e(config('pleb.mail.ios_url')); ?>"><img style="display:block;width:100%;max-width:117px;border:0px;"    width="117" src="<?php echo e(asset('master/App-Store.png')); ?>" border="0"  alt="icon"></a>
                                                                 </td>
                                                                 <td width="10" style="width: 10px;"></td>
                                                                 <td align="center">
-                                                                    <a href="<?php echo e(config('pleb.mail.play_url')); ?>"><img style="display:block;width:100%;max-width:117px;border:0px;"    width="117" src="<?php echo e(asset('storage/images/Google-play.png')); ?>" border="0"  alt="icon"></a>
+                                                                    <a href="<?php echo e(config('pleb.mail.play_url')); ?>"><img style="display:block;width:100%;max-width:117px;border:0px;"    width="117" src="<?php echo e(asset('master/Google-play.png')); ?>" border="0"  alt="icon"></a>
                                                                 </td>
                                                             </tr>
                                                         </table>

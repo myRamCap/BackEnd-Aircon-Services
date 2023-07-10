@@ -57,7 +57,8 @@ class ClientController extends Controller
             // $parameters = array(
             //     'apikey' => 'fb78b4c7aa9d8bc5d994a1b4b39f13a5', //Your API KEY
             //     'number' => $contact_number,
-            //     'message' => $validToken.' is your authentication code for MangPogs, for your protection do not share this code with anyone.',
+            //     'message' => $validToken.' is your authentication code for MangPogs. For your protection, do not share this code with anyone.',
+            //     'sendername' => 'MangPogs'
             // );
             // curl_setopt( $ch, CURLOPT_URL,'https://semaphore.co/api/v4/messages' );
             // curl_setopt( $ch, CURLOPT_POST, 1 );
@@ -197,12 +198,16 @@ class ClientController extends Controller
         }
 
 
+        
+
         if ($request->contact_number == '09123456789') {
             return response('Test Account', 200);
 
         } else {
-            $client = Client::where('contact_number',$request->contact_number)->first();
-            
+             
+            $client = Client::where('contact_number', $request->contact_number)->first();
+ 
+
             if (!$client){
                 return response([
                      'contact_number' => ['Provided contact number is not registered']

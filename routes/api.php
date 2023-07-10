@@ -55,13 +55,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/web/services', AdminServiceController::class);
     Route::resource('/web/servicecenter', AdminServiceCenterController::class);
     Route::resource('/web/aircons', AdminAirconController::class);
-    Route::resource('/web/service_center/services', AdminServiceCenterServicesController::class);
+    Route::resource('/web/service_center/service', AdminServiceCenterServicesController::class);
     Route::resource('/web/service_center/operationtime', AdminOperationTimeController::class);
     Route::resource('/web/service_center/timeslot', AdminServiceCenterTimeSlotController::class);
     Route::resource('/web/service_center/booking', AdminServiceCenterBookingController::class);
     Route::resource('/web/client', AdminClientController::class);
     Route::resource('/web/notification', AdminNotificationController::class);
-    Route::resource('/web/booking', AdminBookingController::class);
+    Route::resource('/web/bookings', AdminBookingController::class);
     Route::resource('/web/promotion', AdminPromotionController::class);
     Route::resource('/web/servicecost', AdminServiceCostController::class);
 
@@ -83,10 +83,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     
     // CLIENT APP
-    Route::resource('/mobile/aircons', MobileAirconController::class);
-    Route::resource('/mobile/client', MobileClientController::class);
-    Route::resource('/mobile/services', MobileServiceController::class);
-    Route::resource('/mobile/booking', MobileBookingController::class);
+    Route::resource('/mobile/aircon', MobileAirconController::class);
+    Route::resource('/mobile/clients', MobileClientController::class);
+    Route::resource('/mobile/servicess', MobileServiceController::class);
+    Route::resource('/mobile/bookingss', MobileBookingController::class);
 
     Route::post('/mobile/rating', [MobileRatingController::class, 'rating']);
     Route::get('/mobile/editclient/{id}', [MobileClientController::class, 'edit_profile']);
