@@ -18,12 +18,12 @@ class AirconController extends Controller
         $validator = Validator::make($request->all(), [
             'client_id' => 'required|integer',
             'aircon_name' => 'required|string',
-            'aircon_type' => 'nullable|string',
-            'make' => 'required|string',
+            'aircon_type' => 'required|string',
+            'make' => 'nullable|string',
             'model' => 'nullable|string',
-            'horse_power' => 'nullable|string',
+            'horse_power' => 'required|string',
             'serial_number' => 'nullable|string',
-            'image' => 'nullable|required',
+            'image' => 'nullable',
             'notes' => 'nullable',
         ]);
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ServiceCost;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateServiceCostRequest extends FormRequest
@@ -21,12 +22,13 @@ class UpdateServiceCostRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'title' => 'required|string|unique:services_logos,title,'.$this->id,
-            'description' => 'required|string',
-            'image' => 'string',
-            'image_url' => 'string',
-            'updated_by' => 'integer',
+            'service_center_id' => 'required|integer',
+            'service_id' => 'required|integer|unique:service_costs,service_id,'.$this->id,
+            'cost' => 'required|integer',
+            'markup' => 'required|integer',
+            'notes' => 'nullable',
         ];
     }
 }

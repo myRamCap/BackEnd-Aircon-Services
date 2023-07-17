@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\ClientToken::create([
-            'token' => '134679',
+            'token' => '1346',
             'contact_number' => '09123456789',
             'is_activated' => '0',
             'is_expired' => '0',

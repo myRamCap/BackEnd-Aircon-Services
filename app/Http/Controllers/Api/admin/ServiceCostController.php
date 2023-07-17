@@ -33,8 +33,15 @@ class ServiceCostController extends Controller
 
     public function update(UpdateServiceCostRequest $request) {
         $data = $request->validated();
-        $data['price'] = $request->cost + $request->markup;
-        $service_cost = ServiceCost::create($data);
+
+        $service_cost = ServiceCost::find($request->id);
+        $service_cost->service_center_id = $request->service_center_id;
+        $service_cost->service_id = $request->service_id;
+        $service_cost->cost = $request->cost;
+        $service_cost->markup = $request->markup;
+        $service_cost->price = $request->cost + $request->markup;
+        $service_cost->notes = $request->notes;
+        $service_cost->save();
         return response(new ServiceCostResource($service_cost), 201);
     }
 }

@@ -121,6 +121,8 @@ class BookingController extends Controller
             'booking_date' => 'required|string',
             'time' => 'required|string',
             'notes' => 'nullable',
+            'longitude' => 'required',
+            'latitude' => 'required',
         ]);
 
         if ($validator->fails()){
@@ -140,6 +142,8 @@ class BookingController extends Controller
             'booking_date' => $request->booking_date,
             'time' => $request->time,
             'notes' => $request->notes,
+            'longitude' => $request->longitude,
+            'latitude' => $request->latitude,
         ];
 
         $time_encode = DB::select("SELECT count(time) as time

@@ -58,7 +58,8 @@ class ServiceCenterController extends Controller
         foreach ($service_centers as $service_center) {
             $services = ServiceCenterService::join('services', 'services.id', '=', 'service_center_services.service_id')
                         ->join('services_logos', 'services_logos.id', '=', 'services.image_id')
-                        ->select('service_center_services.id', 'services.name', 'services.details', 'services_logos.image_url', 'service_center_services.estimated_time', 'service_center_services.estimated_time_desc' )
+                        ->join('service_costs', 'service_center_services.id', '=', 'service_costs.service_id')
+                        ->select('service_center_services.id', 'services.name', 'services.details', 'service_costs.price', 'services_logos.image_url', 'service_center_services.estimated_time', 'service_center_services.estimated_time_desc' )
                         ->where('service_center_services.service_center_id', $service_center->id)
                         ->get();
          
@@ -67,7 +68,7 @@ class ServiceCenterController extends Controller
             
             $serviceCenterData[] = [
                 'service_center' => [
-                    'data' => array_merge($service_center->toArray(), [
+                    'data' => array_merge(  [
                         'services' => $services,
                         'timeSlot' => $timeslot
                     ])

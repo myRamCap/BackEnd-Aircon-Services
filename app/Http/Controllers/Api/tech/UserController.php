@@ -91,7 +91,7 @@ class UserController extends Controller
         $user = User::where('email', '=', $request->email)->first();
 
 
-        if ($user['role_id'] == 1) {
+        if ($user['role_id'] == 4) {
             $user_email = (new UserController)->email_send($request->email);
                 return $user_email;
         } else {

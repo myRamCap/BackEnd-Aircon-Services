@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('time');
             $table->string('tech_id', 255)->nullable();
             $table->text('notes')->nullable();
+            $table->decimal('longitude', 19, 15)->nullable();
+            $table->decimal('latitude', 19, 15)->nullable();
             $table->bigInteger('updated_by')->nullable();
             $table->timestamps();
         });

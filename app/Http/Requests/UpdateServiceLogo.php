@@ -22,34 +22,12 @@ class UpdateServiceLogo extends FormRequest
      */
     public function rules(): array
     {
-        $serviceCenterId = $this->input('service_center_id');
-        $service = $this->input('service_id');
-
         return [
             'title' => 'required|string|unique:services_logos,title,'.$this->id,
             'description' => 'required|string',
             'image' => 'string',
             'image_url' => 'string',
             'updated_by' => 'integer',
-
-            'service_center_id' => 'required|integer',
-            'service_id' => 'required|integer|unique:services_logos,title',
-            'service_id' => [
-                'required',
-                'integer',
-                function ($attribute, $value, $fail) use ($serviceCenterId, $service) {
-                    $existingRecord = ServiceCost::where('service_id', $service)
-                        ->where('service_center_id', '=', $serviceCenterId)
-                        ->first();
-    
-                    if ($existingRecord) {
-                        $fail("The service has already been taken.");
-                    }
-                },
-            ],
-            'cost' => 'required|integer',
-            'markup' => 'required|integer',
-            'notes' => 'nullable',
         ];
     }
 }

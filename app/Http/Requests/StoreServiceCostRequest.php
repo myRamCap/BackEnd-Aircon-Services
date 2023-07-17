@@ -27,7 +27,6 @@ class StoreServiceCostRequest extends FormRequest
 
         return [ 
             'service_center_id' => 'required|integer',
-            'service_id' => 'required|integer|unique:services_logos,title',
             'service_id' => [
                 'required',
                 'integer',

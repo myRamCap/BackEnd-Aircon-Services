@@ -86,8 +86,8 @@ class ClientController extends Controller
             'email' => 'required|email|unique:clients,email',
             'contact_number' => 'required|string|unique:clients,contact_number',
             'address' => 'string',
-            'longitude' => 'required|numeric|regex:/^\d{0,4}\.\d{1,15}$/',
-            'latitude' => 'required|numeric|regex:/^\d{0,4}\.\d{1,15}$/',
+            // 'longitude' => 'required|numeric|regex:/^\d{0,4}\.\d{1,15}$/',
+            // 'latitude' => 'required|numeric|regex:/^\d{0,4}\.\d{1,15}$/',
         ]);
 
          if ($validator->fails()){
@@ -100,8 +100,8 @@ class ClientController extends Controller
             'email' => $request->email,
             'contact_number' => $request->contact_number,
             'address' => $request->address,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude,
+            // 'longitude' => $request->longitude,
+            // 'latitude' => $request->latitude,
         ];
 
         ClientTemp::create($data);
