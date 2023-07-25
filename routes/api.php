@@ -86,10 +86,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('/mobile/aircon', MobileAirconController::class);
     Route::resource('/mobile/clients', MobileClientController::class);
     Route::resource('/mobile/servicess', MobileServiceController::class);
+
+    // change time
     Route::resource('/mobile/bookingss', MobileBookingController::class);
 
+    Route::get('/mobile/filter_services/{id}', [MobileServiceController::class, 'getServices']);
     Route::post('/mobile/rating', [MobileRatingController::class, 'rating']);
-    Route::get('/mobile/editclient/{id}', [MobileClientController::class, 'edit_profile']);
+    Route::put('/mobile/editclient', [MobileClientController::class, 'edit_profile']);
     Route::get('/mobile/notifications', [MobileNotificationController::class, 'notifications']);
     Route::get('/mobile/promotions/{id}', [MobilePromotionController::class, 'promotions']);
     Route::get('/mobile/upcomingbooking/{id}', [MobileBookingController::class, 'upcoming']);
@@ -98,6 +101,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/mobile/servicecenters/{category}', [MobileServiceCenterController::class, 'getCategory']);
     Route::get('/mobile/servicecenters', [MobileServiceCenterController::class, 'getall']);
     Route::get('/mobile/servicecenterdays/{id}', [MobileServiceCenterController::class, 'getdays']);
+
+    // change time
     Route::get('/mobile/service_center/timeslot/{id}/{year}/{month}/{day}',[MobileServiceCenterTimeSlotController::class, 'timeslot']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -110,17 +115,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/reports_monthlyfilter/{id}/{monthStart}/{monthEnd}/{year}', [ReportController::class, 'monthlyfilter']);
 
     // TECHNICIAN APP
-    Route::get('/tech/upcoming', [TechBookingController::class, 'upcoming']);
-    Route::put('/tech/upcoming/{id}', [TechBookingController::class, 'update_upcoming']);
-    Route::get('/tech/intransit', [TechBookingController::class, 'intransit']);
+    Route::get('/tech/upcoming/{id}', [TechBookingController::class, 'upcoming']);
+    Route::put('/tech/upcoming/{id}/{tech_id}', [TechBookingController::class, 'update_upcoming']);
+    Route::get('/tech/intransit/{id}', [TechBookingController::class, 'intransit']);
     Route::put('/tech/intransit/{id}', [TechBookingController::class, 'update_intransit']);
-    Route::get('/tech/inprocess', [TechBookingController::class, 'inprocess']);
+    Route::get('/tech/inprocess/{id}', [TechBookingController::class, 'inprocess']);
     Route::put('/tech/inprocess/{id}', [TechBookingController::class, 'update_inprocess']);
-    Route::get('/tech/completed', [TechBookingController::class, 'completed']);
+    Route::get('/tech/completed/{id}', [TechBookingController::class, 'completed']);
     Route::get('/tech/booking/{id}', [TechBookingController::class, 'details']);
     Route::get('/tech/service_center/{id}', [TechServiceCenterController::class, 'service_center']);
     Route::get('/tech/info/{id}', [TechUserController::class, 'getDetails']);
     Route::get('/tech/available/{id}', [TechBookingController::class, 'available']);
+
+    Route::post('/tech/delete_account/{id}', [TechUserController::class, 'delete']);
+    Route::post('/tech/logout', [TechUserController::class, 'logout']);
 
     // testing email
     // Route::get('/mobile/email/{id}', [MobileBookingController::class, 'email_send']);
@@ -134,6 +142,7 @@ Route::post('/forgot_password', [AuthController::class, 'forgot_password']);
 Route::post('/mobile/client_register', [MobileClientController::class, 'register']);
 Route::post('/mobile/client_login', [MobileClientController::class, 'login']);
 Route::post('/mobile/client_verify', [MobileClientController::class, 'verification']);
+Route::delete('/mobile/client_otp_cancel/{number}', [MobileClientController::class, 'otp_cancel']);
 
 //Technician
 Route::post('/tech/login', [TechUserController::class, 'login']);

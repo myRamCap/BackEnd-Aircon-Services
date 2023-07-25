@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('role_id');
             $table->string('image')->nullable();
             $table->boolean('is_activated')->default(0);
-            $table->boolean('status')->default(0);
+            $table->string('status')->default('active');
             $table->bigInteger('created_by')->nullable();
             $table->bigInteger('updated_by')->nullable();
             $table->rememberToken();

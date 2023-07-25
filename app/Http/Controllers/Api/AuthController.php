@@ -72,7 +72,7 @@ class AuthController extends Controller
         $login_attemp = LoginAttempt::where('email', $request->email)->count();
         $login_blocked = UserBlock::where('email', $request->email)->where('description', 'password failed')->first();
         $user_blocked = UserBlock::where('email', $request->email)->first();
-
+ 
         if (!Auth::attempt($credentials)){
             if($login_attemp >= 3) {
                 if ($login_blocked) {
@@ -129,10 +129,16 @@ class AuthController extends Controller
             }
              
         } else {
-            UserBlock::where('email', $request->email)->delete();
-            LoginAttempt::where('email', $request->email)->delete();
-            $user_email = (new AuthController)->email_send($request->email);
-            return $user_email;
+            $user = User::where('email', $request->email)->first();
+
+            if ($user['role_id'] != 4) {
+                UserBlock::where('email', $request->email)->delete();
+                LoginAttempt::where('email', $request->email)->delete();
+                $user_email = (new AuthController)->email_send($request->email);
+                return $user_email;
+            } else {
+                return response('Tech Account are not allowed to login in admin panel', 422);
+            }
         }   
     }
 

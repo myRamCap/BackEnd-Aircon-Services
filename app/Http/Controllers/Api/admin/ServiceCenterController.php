@@ -167,11 +167,11 @@ class ServiceCenterController extends Controller
     {
         $user = User::where('id', $id)->first();
         
-        if ($user['role_id'] == 2) {
+        if ($user['role_id'] == 1) {
             return ServiceCenterResource::collection(
                 ServiceCenter::orderBy('id','desc')->get()
             ); 
-        } else if ($user['role_id'] == 1) {
+        } else if ($user['role_id'] == 2) {
             return ServiceCenterResource::collection(
                 ServiceCenter::where('corporate_manager_id', $id)->orderBy('id','desc')->get()
             ); 

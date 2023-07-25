@@ -68,7 +68,7 @@ class ServiceCenterController extends Controller
             
             $serviceCenterData[] = [
                 'service_center' => [
-                    'data' => array_merge(  [
+                    'data' => array_merge($service_center->toArray(), [
                         'services' => $services,
                         'timeSlot' => $timeslot
                     ])

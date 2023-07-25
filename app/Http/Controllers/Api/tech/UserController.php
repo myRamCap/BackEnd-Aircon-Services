@@ -92,8 +92,14 @@ class UserController extends Controller
 
 
         if ($user['role_id'] == 4) {
-            $user_email = (new UserController)->email_send($request->email);
+            if ($user['status'] === 'active') {
+                $user_email = (new UserController)->email_send($request->email);
                 return $user_email;
+            } else {
+                return response([
+                    'errors' =>  ['user_status' => 'Im sorry, but your account has been deleted, and you can no longer use it.']
+               ], 422);
+            }
         } else {
             return response([
                 'errors' =>  ['user_role' => 'Only Technician Account can login.']
@@ -154,5 +160,30 @@ class UserController extends Controller
         $mail->from('admin@mangpogs.com');
         Mail::to($email)->send($mail);
         return response($user);
+    }
+
+    public function delete($id) {
+        $user = User::where('id', '=', $id)->first();
+
+        if ($user['role_id'] == 4 && $user['status'] === 'active') {
+            $user = User::find($id);
+            $user->status = 'inactive';
+            $user->save();
+            return response([
+                'success' =>  ['user_status' => 'Successfully Deleted']
+           ], 200);
+        } else {
+            return response([
+                'errors' =>  ['user_status' => 'Youre not allowed to deleted this account']
+           ], 422);
+        }
+    }
+
+    public function logout(Request $request) {
+        /** @var User $user */
+        $user = $request->user();
+        $user->tokens()->delete();
+
+        return response('Logout Successfully', 204);
     }
 }

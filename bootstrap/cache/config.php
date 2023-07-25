@@ -2,8 +2,8 @@
   'app' => 
   array (
     'name' => 'MangPogs',
-    'env' => 'production',
-    'debug' => false,
+    'env' => 'localhost',
+    'debug' => true,
     'url' => 'http://localhost',
     'asset_url' => NULL,
     'timezone' => 'Asia/Manila',

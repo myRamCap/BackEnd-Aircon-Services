@@ -134,59 +134,58 @@ class UserController extends Controller
                                 ->count();
                 $restriction = UserRestriction::where('user_id', $request->user_id)->first();
                 $restriction_count = $restriction['allowed_bm'] ?? 0;
-    
 
-                if ($corporate_manager == $restriction_count) {
-                    return response([
-                        'errors' => [ 'restriction' => ['Not allowed to create another Branch Manager']]
-                    ], 422);
-                } else {
-                    if ($request->role_id == 3) {
-                        $user = User::create($data);
-                        ManageUser::create([
-                            'user_id' => $user->id,
-                            'service_center_id' => $request->service_center_id,
-                            'corporate_manager_id' => $request->user_id,
-                            'branch_manager_id' => $request->branch_manager_id
-                        ]);
+                if ($request->role_id == 3) {
+                    if ($corporate_manager == $restriction_count) {
+                        return response([
+                            'errors' => [ 'restriction' => ['Not allowed to create another Branch Manager']]
+                        ], 422);
                     } else {
-                        $sc = ServiceCenter::where('id', $request->service_center_id)->first();
-                        $latest_tech_ref_id = TechInfo::where('service_center_id',  $request->service_center_id)->latest()->first();
-
-                        if ($latest_tech_ref_id) {
-                            // Extract the numeric part from the tech reference number
-                            $numeric_part = substr($latest_tech_ref_id['tech_ref_id'], -2);
-                            
-                            // Increment the numeric part by converting it to an integer
-                            $next_numeric_part = intval($numeric_part) + 1;
-                            
-                            // Pad the numeric part with leading zeros if necessary
-                            $padded_numeric_part = str_pad($next_numeric_part, 2, '0', STR_PAD_LEFT);
-                            
-                            // Generate the next tech reference number by combining the prefix and the incremented numeric part
-                            $next_tech_ref_number =   'T' . $padded_numeric_part;
-                        } else {
-                            $next_tech_ref_number = 'T01';
-                        }
-                        
-
-    
-
                         $user = User::create($data);
                         ManageUser::create([
                             'user_id' => $user->id,
                             'service_center_id' => $request->service_center_id,
                             'corporate_manager_id' => $request->user_id,
                             'branch_manager_id' => $request->branch_manager_id
-                        ]);
-                        TechInfo::create([
-                            'service_center_id' => $request->service_center_id, 
-                            'tech_id' => $user->id,
-                            'tech_ref_id' => $sc['reference_number'] . '-' . $next_tech_ref_number,
                         ]);
                     }
-                    
+                } else {
+                    $sc = ServiceCenter::where('id', $request->service_center_id)->first();
+                    $latest_tech_ref_id = TechInfo::where('service_center_id',  $request->service_center_id)->latest()->first();
+
+                    if ($latest_tech_ref_id) {
+                        // Extract the numeric part from the tech reference number
+                        $numeric_part = substr($latest_tech_ref_id['tech_ref_id'], -2);
+                        
+                        // Increment the numeric part by converting it to an integer
+                        $next_numeric_part = intval($numeric_part) + 1;
+                        
+                        // Pad the numeric part with leading zeros if necessary
+                        $padded_numeric_part = str_pad($next_numeric_part, 2, '0', STR_PAD_LEFT);
+                        
+                        // Generate the next tech reference number by combining the prefix and the incremented numeric part
+                        $next_tech_ref_number =   'T' . $padded_numeric_part;
+                    } else {
+                        $next_tech_ref_number = 'T01';
+                    }
+
+                    $data['is_activated'] = 1;
+
+                    $user = User::create($data);
+                    ManageUser::create([
+                        'user_id' => $user->id,
+                        'service_center_id' => $request->service_center_id,
+                        'corporate_manager_id' => $request->user_id,
+                        'branch_manager_id' => $request->branch_manager_id
+                    ]);
+                    TechInfo::create([
+                        'service_center_id' => $request->service_center_id, 
+                        'tech_id' => $user->id,
+                        'tech_ref_id' => $sc['reference_number'] . '-' . $next_tech_ref_number,
+                    ]);
                 }
+                    
+              
                 
             } else if ($request->user_role == 3) {
                 $corporate = ManageUser::where('user_id', $request->user_id)->first();
@@ -195,6 +194,7 @@ class UserController extends Controller
                 $latest_tech_ref_number = $latest_tech_ref_id ? intval(substr($latest_tech_ref_id['tech_ref_id'], 1)) : 0;
                 $next_tech_ref_number = $latest_tech_ref_number + 1;
                 $next_tech_ref_id = 'T' . str_pad($next_tech_ref_number, 2, '0', STR_PAD_LEFT);
+                $data['is_activated'] = 1;
 
                 $user = User::create($data);
                 ManageUser::create([
@@ -209,8 +209,6 @@ class UserController extends Controller
                     'tech_ref_id' => $sc['reference_number'] . '-' . $next_tech_ref_id,
                 ]);
 
-
-                
             }
 
             return response(new UserResource($user), 201);

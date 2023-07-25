@@ -19,7 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/email', function () {
-    return view('emails.booking');
+    return view('emails.bookingCompleted');
 });
 
 Route::get('/emailw', function () {

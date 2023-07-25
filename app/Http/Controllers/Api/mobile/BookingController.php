@@ -75,10 +75,13 @@ class BookingController extends Controller
     }
 
     public function records($id) {
-        $query = DB::select("SELECT a.reference_number, b.name as service_center, d.aircon_name, c.name as services, a.booking_date, a.time, a.status  FROM bookings a
-                    INNER JOIN service_centers b ON a.service_center_id = b.id
-                    INNER JOIN services c ON a.services_id = c.id
-                    INNER JOIN aircons d ON a.aircon_id = d.id
+        $query = DB::select("SELECT a.reference_number, e.name as service_center, f.aircon_name, d.name as services, a.booking_date, a.time, a.status, c.price
+                    FROM bookings a
+                    INNER JOIN service_center_services b on a.services_id = b.id
+                    INNER JOIN service_costs c on b.id = c.service_id
+                    INNER JOIN services d on b.service_id = d.id
+                    INNER JOIN service_centers e on a.service_center_id = e.id
+                    INNER JOIN aircons f on a.aircon_id = f.id
                     WHERE a.client_id = $id
                     --  AND a.booking_date < CURRENT_DATE() OR (a.client_id = $id AND a.booking_date = CURRENT_DATE() AND a.time < CURRENT_TIME());
                 ");
@@ -133,6 +136,9 @@ class BookingController extends Controller
             }
         }
 
+        $time = Carbon::createFromFormat('h:i A', $request->time)->format('H:i');
+
+
         $data = [
             'client_id' => $request->client_id,
             'aircon_id' => $request->aircon_id,
@@ -140,7 +146,7 @@ class BookingController extends Controller
             'service_center_id' => $request->service_center_id,
             'status' => 'Up Coming',
             'booking_date' => $request->booking_date,
-            'time' => $request->time,
+            'time' => $time,
             'notes' => $request->notes,
             'longitude' => $request->longitude,
             'latitude' => $request->latitude,
