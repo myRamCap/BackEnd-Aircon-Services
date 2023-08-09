@@ -13,14 +13,34 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         \App\Models\User::create([
-            'first_name' => 'Super',
-            'middle_name' => '',
-            'last_name' => 'Admin',
-            'role_id' => '1',
-            'email' => 'admin@mangpogs.com',
-            'password' => bcrypt('welcome@123'),
-            'contact_number' => '123456789',
-            'image' => 'image_test'
+            [
+                'first_name' => 'Super',
+                'middle_name' => '',
+                'last_name' => 'Admin',
+                'role_id' => '1',
+                'is_activated' => '1',
+                'status' => 'active',
+                'email' => 'admin@mangpogs.com',
+                'password' => bcrypt('welcome@123'),
+                'contact_number' => '123456789',
+                'image' => 'image_test',
+                'created_at' => now(), 
+                'updated_at' => now(), 
+            ],
+            [
+                'first_name' => 'Demo',
+                'middle_name' => '',
+                'last_name' => 'Demo',
+                'role_id' => '1',
+                'is_activated' => '1',
+                'status' => 'active',
+                'email' => 'demo@mangpogs.com',
+                'password' => bcrypt('demo@123'),
+                'contact_number' => '987654321',
+                'image' => 'image_test',
+                'created_at' => now(), 
+                'updated_at' => now(), 
+            ]
         ]);
 
         \App\Models\Client::insert([
@@ -65,6 +85,13 @@ class DatabaseSeeder extends Seeder
         \App\Models\ClientToken::create([
             'token' => '1346',
             'contact_number' => '09123456789',
+            'is_activated' => '0',
+            'is_expired' => '0',
+        ]);
+
+        \App\Models\Verifytoken::create([
+            'token' => '134679',
+            'email' => 'demo@mangpogs.com',
             'is_activated' => '0',
             'is_expired' => '0',
         ]);

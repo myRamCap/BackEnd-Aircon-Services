@@ -41,7 +41,7 @@ class UserResource extends JsonResource
             'image' => $this->image,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
-            'created_at' => $createdAt->format('Y-m-d H:i:s'),
+            'created_at' => $createdAt,
             'updated_at' => $createdAt->format('Y-m-d H:i:s'),
         ];
     }

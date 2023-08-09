@@ -224,12 +224,13 @@ class UserController extends Controller
         if ($user['role_id'] == 1) {
             // DB::enableQueryLog(); .id', 'desc')
             return UserResource::collection(
-                DB::select("SELECT a.*, b.name, c.allowed_bm, c.allowed_sc, CONCAT(d.first_name, ' ', d.last_name) AS created_by, CONCAT(e.first_name, ' ', e.last_name) AS updated_by
+                DB::select("SELECT a.*, b.name, f.tech_ref_id, c.allowed_bm, c.allowed_sc, CONCAT(d.first_name, ' ', d.last_name) AS created_by, CONCAT(e.first_name, ' ', e.last_name) AS updated_by
                 FROM users a
                 INNER JOIN roles b ON b.id = a.role_id 
                 LEFT JOIN user_restrictions c ON c.user_id = a.id
                 LEFT JOIN users d ON d.id = a.created_by
                 LEFT JOIN users e ON e.id = a.updated_by
+                LEFT JOIN tech_infos f on a.id = f.tech_id
                 ORDER BY a.id DESC")
             ); 
             // return DB::getQueryLog(); 

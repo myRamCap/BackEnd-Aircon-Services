@@ -25,7 +25,7 @@ class ClientController extends Controller
         return ClientResource::collection(
             Client::leftjoin('users', 'users.id', '=', 'clients.updated_by')
             ->select('clients.*', 'users.first_name as updated_by')
-            ->where('clients.active', '=', 1)
+            // ->where('clients.active', '=', 1)
             ->orderBy('first_name','asc')->get()
          ); 
     }

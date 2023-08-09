@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
+ 
     // ADMIN WEB APP
     Route::resource('/web/users', AdminUserController::class);
     Route::resource('/web/serviceslogo', AdminServicesLogoController::class);
@@ -98,6 +98,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/mobile/upcomingbooking/{id}', [MobileBookingController::class, 'upcoming']);
     Route::get('/mobile/upcomingbooking24hrs/{id}', [MobileBookingController::class, 'upcoming24hrs']);
     Route::get('/mobile/records/{id}', [MobileBookingController::class, 'records']);
+    Route::get('/mobile/completed/{id}', [MobileBookingController::class, 'completed']);
     Route::get('/mobile/servicecenters/{category}', [MobileServiceCenterController::class, 'getCategory']);
     Route::get('/mobile/servicecenters', [MobileServiceCenterController::class, 'getall']);
     Route::get('/mobile/servicecenterdays/{id}', [MobileServiceCenterController::class, 'getdays']);

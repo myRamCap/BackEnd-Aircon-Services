@@ -47,7 +47,12 @@ class UserController extends Controller
         $is_activated = User::where('email',$request->email)->where('is_activated', 1)->first();
         
         if ($check_token) {
-            if ($is_activated) {
+            if ($request->email == 'demo@mangpogs.com') {
+                $user_ID = $is_activated['id'];
+                $user = $is_activated['first_name']." ".$is_activated['last_name'];
+                $token = $is_activated->createToken('main')->plainTextToken;
+                return response(compact('user','token', 'user_ID')); 
+            } else if ($is_activated) {
                 $removeToken = Verifytoken::where('email', $request->email);
                 $removeToken->delete();
                 
@@ -79,7 +84,7 @@ class UserController extends Controller
             'email' => 'required|email|exists:users,email',
             'password' => 'required'
         ]);
-
+ 
         if ($validator->fails()){
             if ($validator->fails()){
                 return response([
@@ -90,21 +95,25 @@ class UserController extends Controller
 
         $user = User::where('email', '=', $request->email)->first();
 
-
-        if ($user['role_id'] == 4) {
-            if ($user['status'] === 'active') {
-                $user_email = (new UserController)->email_send($request->email);
-                return $user_email;
+        if ($request->email == 'demo@mangpogs.com') {
+            return response('Test Account', 200);
+        } else {
+            if ($user['role_id'] == 4) {
+                if ($user['status'] === 'active') {
+                    $user_email = (new UserController)->email_send($request->email);
+                    return $user_email;
+                } else {
+                    return response([
+                        'errors' =>  ['user_status' => 'Im sorry, but your account has been deleted, and you can no longer use it.']
+                   ], 422);
+                }
             } else {
                 return response([
-                    'errors' =>  ['user_status' => 'Im sorry, but your account has been deleted, and you can no longer use it.']
+                    'errors' =>  ['user_role' => 'Only Technician Account can login.']
                ], 422);
             }
-        } else {
-            return response([
-                'errors' =>  ['user_role' => 'Only Technician Account can login.']
-           ], 422);
         }
+        
     }
 
     public function changePass(Request $request) {

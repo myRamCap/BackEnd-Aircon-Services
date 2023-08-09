@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
 {
-    public function email_send($id){
-        $booking_id = Booking::where('client_id', '=', $id)->latest()->first();
-        $client = Client::where('id', '=', $id)->first();
+    public function email_send($bookingId){
+        $booking_id = Booking::where('client_id', '=', $bookingId)->latest()->first();
+        $client = Client::where('id', '=', $bookingId)->first();
       
         $user = Booking::join('service_centers', 'service_centers.id', '=', 'bookings.service_center_id')
                 ->join('services', 'services.id', '=', 'bookings.services_id')
@@ -74,6 +74,21 @@ class BookingController extends Controller
         return $query;
     }
 
+    public function completed($id) {
+        $query = DB::select("SELECT a.reference_number, e.name as service_center, f.aircon_name, d.name as services, a.booking_date, a.time, a.status, c.price
+                    FROM bookings a
+                    INNER JOIN service_center_services b on a.services_id = b.id
+                    INNER JOIN service_costs c on b.id = c.service_id
+                    INNER JOIN services d on b.service_id = d.id
+                    INNER JOIN service_centers e on a.service_center_id = e.id
+                    INNER JOIN aircons f on a.aircon_id = f.id
+                    WHERE a.client_id = $id AND a.status = 'Completed'
+                    --  AND a.booking_date < CURRENT_DATE() OR (a.client_id = $id AND a.booking_date = CURRENT_DATE() AND a.time < CURRENT_TIME());
+                ");
+
+        return $query;
+    }
+
     public function records($id) {
         $query = DB::select("SELECT a.reference_number, e.name as service_center, f.aircon_name, d.name as services, a.booking_date, a.time, a.status, c.price
                     FROM bookings a
@@ -114,7 +129,6 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'client_id' => 'required|integer',
             'aircon_id' => 'required|integer',
@@ -137,7 +151,6 @@ class BookingController extends Controller
         }
 
         $time = Carbon::createFromFormat('h:i A', $request->time)->format('H:i');
-
 
         $data = [
             'client_id' => $request->client_id,
@@ -201,6 +214,9 @@ class BookingController extends Controller
                 $data['reference_number'] = $reference_number.'-001';
             }
             $booking = Booking::create($data);
+            $bookingId = $booking->id;
+
+            (new BookingController)->email_send($bookingId);
             return response(new ServiceCenterBookingResource($booking), 200);
         } else {
             return response([
